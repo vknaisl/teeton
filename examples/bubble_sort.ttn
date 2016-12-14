@@ -1,0 +1,31 @@
+println("How many numbers?")
+
+var count = scan_int()
+var numbers = create_list(count, 0)
+var n = 0;
+
+while(n < count) {
+	println("Give me a number")
+	numbers[n] = scan_int()
+	n++
+}
+
+
+var i = 0
+while(i < len(numbers) - 1) {
+	var j = 0
+	while (j < len(numbers) - i - 1) {
+		if (numbers[j] < numbers[j + 1]) {
+			var tmp = numbers[j]
+			numbers[j] = numbers[j + 1]
+			numbers[j + 1] = tmp
+		}
+		j = j + 1
+	}
+
+	i = i + 1
+}
+
+println("Here are your numbers sorted:")
+println(numbers)
+
