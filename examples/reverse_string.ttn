@@ -1,0 +1,14 @@
+var name = scan_string()
+var length = len(name)
+var half_length = length / 2
+var i = 0
+while(True) {
+	if (i == halfLength) {
+		break
+	}
+	var temp = name[i]
+	name[i] = name[length - 1 - i]
+	name[length - 1 - i] = temp
+	i = i + 1
+}
+
