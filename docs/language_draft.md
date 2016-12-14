@@ -63,11 +63,12 @@ var b = scan_int()
 scan_int() 	   : () -> int
 scan_char()    : () -> char
 scan_string()  : () -> list of chars
-print() 	   : () -> nothing
-println() 	   : () -> nothing
+print(...) 	   : () -> nothing
+println(...)   : () -> nothing
 type() 	  	   : () -> type of variable
 list()		   : (...) -> list
 create_list()  : (size, fill_value) -> list
+len(a)         : (list) -> int
 ```
 
 ## Build-in operators
