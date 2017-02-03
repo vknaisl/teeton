@@ -38,7 +38,7 @@ bool AbstractType::ord(OrderOperator op, AbstractType * other) {
 
 
 bool isEqualable(AbstractType * type) {
-  if (type->type() == INT || type->type() == CHAR) {
+  if (type->type() == INT || type->type() == CHAR || type->type() == BOOL) {
     return true;
   }
   return false;

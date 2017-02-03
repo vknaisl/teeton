@@ -77,13 +77,15 @@ len(a)         : (list) -> int
 -   : (int, int) -> int
 *   : (int, int) -> int
 /   : (int, int) -> int
-!   : (bool) -> bool
 <   : (int, int) -> bool
 >   : (int, int) -> bool
 <=  : (int, int) -> bool
 >=  : (int, int) -> bool
 ==  : (int, int) -> bool, (char, char) -> bool, (list, list) -> bool, (string, string) -> bool
 === : (int, int) -> bool, (char, char) -> bool, (list, list) -> bool, (string, string) -> bool
+!   : (bool) -> bool
+&&  : (bool, bool) -> bool
+||  : (bool, bool) -> bool
 ```
 
 ## If statement
@@ -106,7 +108,7 @@ while (a == 'b') {
 
 ## Comments
 ```
-# create list 
+# create list
 var a = ['j','o','h','n']
 ```
 
