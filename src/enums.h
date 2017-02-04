@@ -4,6 +4,7 @@
 enum Operator {
     ADD, SUB, MUL, DIV, MOD,  // arithmetic
     EQ, NEQ,  // equation
+    EQEQ, // same reference
     GT, LT, GTE, LTE,  // comparison
     AND, OR  // logical
 };

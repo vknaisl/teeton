@@ -147,11 +147,37 @@ void example_complicatedCondition() {
     cout << endl;
 }
 
+/**
+ * var a = 'a'
+ * var b = 'a'
+ *
+ * print(a == b)
+ * print(a === b)
+ * print(a === a)
+ */
+void example_referenceComparison() {
+    Environment *env = new Environment();
+    cout << "* Example reference comparison. Expected result: True, False, True" << endl;
+    AbstractNode * nodes[5] = {
+            new NodeVariableDefinition("a", new NodeConstant(new TypeChar('a'))),
+            new NodeVariableDefinition("b", new NodeConstant(new TypeChar('a'))),
+            new NodePrint(new NodeBinaryOperator(EQ, new NodeVariableName("a"), new NodeVariableName("b"))),
+            new NodePrint(new NodeBinaryOperator(EQEQ, new NodeVariableName("a"), new NodeVariableName("b"))),
+            new NodePrint(new NodeBinaryOperator(EQEQ, new NodeVariableName("a"), new NodeVariableName("a")))
+    };
+    NodeBlock *root = new NodeBlock(nodes, 5);
+    root->evaluate(env);
+    delete root;
+    delete env;
+    cout << endl;
+}
+
 int main() {
     example_arithmetic();
     example_comparison();
     example_whileCycle();
     example_ifElse();
     example_complicatedCondition();
+    example_referenceComparison();
     return 0;
 }

@@ -1,12 +1,22 @@
 #include "type.h"
 
 bool AbstractType::supportsOperator(Operator op) {
-    return false;
+    switch (op) {
+        case EQEQ:
+            return true;
+        default:
+            return false;
+    }
 }
 
 AbstractType *AbstractType::applyOperator(Operator op, AbstractType *other) {
-    runtimeError("Operator not suported for type");
-    return NULL;
+    switch (op) {
+        case EQEQ:
+            return new TypeBool(this == other);
+        default:
+            runtimeError("Operator not suported for type");
+            return NULL;
+    }
 }
 
 // -----------------------------------------------------------------------------
@@ -27,7 +37,7 @@ bool TypeBool::supportsOperator(Operator op) {
         case OR:
             return true;
         default:
-            return false;
+            return AbstractType::supportsOperator(op);
     }
 }
 
@@ -43,8 +53,7 @@ AbstractType *TypeBool::applyOperator(Operator op, AbstractType *other) {
         case OR:
             return new TypeBool(_value || otherBool->value());
         default:
-            runtimeError("Operator not supported");
-            return NULL;
+            return AbstractType::applyOperator(op, other);
     }
 }
 
@@ -68,7 +77,7 @@ bool TypeChar::supportsOperator(Operator op) {
         case LTE:
             return true;
         default:
-            return false;
+            return AbstractType::supportsOperator(op);
     }
 }
 
@@ -88,8 +97,7 @@ AbstractType *TypeChar::applyOperator(Operator op, AbstractType *other) {
         case LTE:
             return new TypeBool(_value <= otherChar->value());
         default:
-            runtimeError("Operator not supported");
-            return NULL;
+            return AbstractType::applyOperator(op, other);
     }
 }
 
@@ -118,7 +126,7 @@ bool TypeInt::supportsOperator(Operator op) {
         case LTE:
             return true;
         default:
-            return false;
+            return AbstractType::supportsOperator(op);
     }
 }
 
@@ -148,7 +156,6 @@ AbstractType *TypeInt::applyOperator(Operator op, AbstractType *other) {
         case LTE:
             return new TypeBool(_value <= otherInt->value());
         default:
-            runtimeError("Operator not supported");
-            return NULL;
+            return AbstractType::applyOperator(op, other);
     }
 }
