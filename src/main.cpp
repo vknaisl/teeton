@@ -8,13 +8,12 @@ void runtimeError(string err) {
   exit(1);
 }
 
-enum ArithmeticOperator { ADD, SUB, MUL, DIV, MOD };
-
-enum EqualOperator { EQ, NEQ };
-
-enum OrderOperator { GT, LT, GTE, LTE };
-
-enum BoolOperator { AND, OR };
+enum Operator {
+  ADD, SUB, MUL, DIV, MOD,  // arithmetic
+  EQ, NEQ,  // equation
+  GT, LT, GTE, LTE,  // comparison
+  AND, OR  // logical
+};
 
 enum Type { CHAR, BOOL, INT };
 
@@ -22,88 +21,26 @@ enum Type { CHAR, BOOL, INT };
 class AbstractType {
 public:
   virtual Type type() = 0;
-  virtual bool equals(EqualOperator op, AbstractType * other);
-  virtual bool ord(OrderOperator op, AbstractType * other);
+  virtual bool supportsOperator(Operator op);
+  virtual AbstractType * applyOperator(Operator op, AbstractType * other);
 };
 
-bool AbstractType::equals(EqualOperator op, AbstractType * other) {
-  runtimeError("Equals not implemented for given type");
+bool AbstractType::supportsOperator(Operator op) {
   return false;
 }
 
-bool AbstractType::ord(OrderOperator op, AbstractType * other) {
-  runtimeError("Ord not implemented for given type");
-  return false;
-}
-
-
-bool isEqualable(AbstractType * type) {
-  if (type->type() == INT || type->type() == CHAR || type->type() == BOOL) {
-    return true;
-  }
-  return false;
-}
-
-
-bool isOrderable(AbstractType * type) {
-  if (type->type() == INT || type->type() == CHAR) {
-    return true;
-  }
-  return false;
-}
-
-
-class TypeChar : public AbstractType {
-public:
-  TypeChar(char value) : _value(value) {};
-  virtual bool equals(EqualOperator op, AbstractType * other);
-  virtual bool ord(OrderOperator ord, AbstractType * other);
-  virtual Type type();
-  char value();
-private:
-  char _value;
-};
-
-Type TypeChar::type() {
-  return CHAR;
-}
-
-char TypeChar::value() {
-  return _value;
-}
-
-bool TypeChar::equals(EqualOperator op, AbstractType * other) {
-  TypeChar * otherChar = (TypeChar *) other;
-  switch(op) {
-    case EQ:
-      return _value == otherChar->value();
-    case NEQ:
-      return _value != otherChar->value();
-  }
-  return false;
-}
-
-bool TypeChar::ord(OrderOperator op, AbstractType * other) {
-  TypeChar * otherChar = (TypeChar *) other;
-  switch(op) {
-    case GT:
-      return _value > otherChar->value();
-    case LT:
-      return _value < otherChar->value();
-    case GTE:
-      return _value >= otherChar->value();
-    case LTE:
-      return _value <= otherChar->value();
-  }
-  return false;
+AbstractType * AbstractType::applyOperator(Operator op, AbstractType * other) {
+  runtimeError("Operator not suported for type");
+  return NULL;
 }
 
 
 class TypeBool : public AbstractType {
 public:
   TypeBool(bool value) : _value(value) {};
-  virtual bool equals(EqualOperator op, AbstractType * other);
   virtual Type type();
+  virtual bool supportsOperator(Operator op);
+  virtual AbstractType * applyOperator(Operator op, AbstractType * other);
   bool value();
 private:
   bool _value;
@@ -117,15 +54,88 @@ bool TypeBool::value() {
   return _value;
 }
 
-bool TypeBool::equals(EqualOperator op, AbstractType * other) {
+bool TypeBool::supportsOperator(Operator op) {
+  switch (op) {
+    case EQ:
+    case NEQ:
+    case AND:
+    case OR:
+      return true;
+    default:
+      return false;
+  }
+}
+
+AbstractType * TypeBool::applyOperator(Operator op, AbstractType * other) {
   TypeBool * otherBool = (TypeBool *) other;
   switch(op) {
     case EQ:
-      return _value == otherBool->value();
+      return new TypeBool(_value == otherBool->value());
     case NEQ:
-      return _value != otherBool->value();
+      return new TypeBool(_value != otherBool->value());
+    case AND:
+      return new TypeBool(_value && otherBool->value());
+    case OR:
+      return new TypeBool(_value || otherBool->value());
+    default:
+      runtimeError("Operator not supported");
+      return NULL;
   }
-  return false;
+}
+
+
+class TypeChar : public AbstractType {
+public:
+  TypeChar(char value) : _value(value) {};
+  virtual Type type();
+  virtual bool supportsOperator(Operator op);
+  virtual AbstractType * applyOperator(Operator op, AbstractType * other);
+  char value();
+private:
+  char _value;
+};
+
+Type TypeChar::type() {
+  return CHAR;
+}
+
+char TypeChar::value() {
+  return _value;
+}
+
+bool TypeChar::supportsOperator(Operator op) {
+  switch (op) {
+    case EQ:
+    case NEQ:
+    case GT:
+    case LT:
+    case GTE:
+    case LTE:
+      return true;
+    default:
+      return false;
+  }
+}
+
+AbstractType * TypeChar::applyOperator(Operator op, AbstractType * other) {
+  TypeChar * otherChar = (TypeChar *) other;
+  switch (op) {
+    case EQ:
+      return new TypeBool(_value == otherChar->value());
+    case NEQ:
+      return new TypeBool(_value != otherChar->value());
+    case GT:
+      return new TypeBool(_value > otherChar->value());
+    case LT:
+      return new TypeBool(_value < otherChar->value());
+    case GTE:
+      return new TypeBool(_value >= otherChar->value());
+    case LTE:
+      return new TypeBool(_value <= otherChar->value());
+    default:
+      runtimeError("Operator not supported");
+      return NULL;
+  }
 }
 
 
@@ -133,8 +143,8 @@ class TypeInt : public AbstractType {
 public:
   TypeInt(int value) : _value(value) {};
   virtual Type type();
-  virtual bool equals(EqualOperator op, AbstractType * other);
-  virtual bool ord(OrderOperator ord, AbstractType * other);
+  virtual bool supportsOperator(Operator op);
+  virtual AbstractType * applyOperator(Operator op, AbstractType * other);
   int value();
 private:
   int _value;
@@ -148,30 +158,54 @@ int TypeInt::value() {
   return _value;
 }
 
-bool TypeInt::equals(EqualOperator op, AbstractType * other) {
-  TypeInt * otherInt = (TypeInt *) other;
-  switch(op) {
+bool TypeInt::supportsOperator(Operator op) {
+  switch (op) {
+    case ADD:
+    case SUB:
+    case MUL:
+    case DIV:
+    case MOD:
     case EQ:
-      return _value == otherInt->value();
     case NEQ:
-      return _value != otherInt->value();
+    case GT:
+    case LT:
+    case GTE:
+    case LTE:
+      return true;
+    default:
+      return false;
   }
-  return false;
 }
 
-bool TypeInt::ord(OrderOperator op, AbstractType * other) {
+AbstractType * TypeInt::applyOperator(Operator op, AbstractType * other) {
   TypeInt * otherInt = (TypeInt *) other;
-  switch(op) {
+  switch (op) {
+    case ADD:
+      return new TypeInt(_value + otherInt->value());
+    case SUB:
+      return new TypeInt(_value - otherInt->value());
+    case MUL:
+      return new TypeInt(_value * otherInt->value());
+    case DIV:
+      return new TypeInt(_value / otherInt->value());
+    case MOD:
+      return new TypeInt(_value % otherInt->value());
+    case EQ:
+      return new TypeBool(_value == otherInt->value());
+    case NEQ:
+      return new TypeBool(_value != otherInt->value());
     case GT:
-      return _value > otherInt->value();
+      return new TypeBool(_value > otherInt->value());
     case LT:
-      return _value < otherInt->value();
+      return new TypeBool(_value < otherInt->value());
     case GTE:
-      return _value >= otherInt->value();
+      return new TypeBool(_value >= otherInt->value());
     case LTE:
-      return _value <= otherInt->value();
+      return new TypeBool(_value <= otherInt->value());
+    default:
+      runtimeError("Operator not supported");
+      return NULL;
   }
-  return false;
 }
 
 
@@ -277,144 +311,33 @@ NodePrint::~NodePrint() {
 }
 
 
-class NodeArithmeticOperator : public AbstractNode {
+class NodeBinaryOperator : public AbstractNode {
 public:
-  NodeArithmeticOperator(ArithmeticOperator op, AbstractNode * a, AbstractNode * b) : op(op), a(a), b(b) {};
-  ~NodeArithmeticOperator();
+  NodeBinaryOperator(Operator op, AbstractNode * a, AbstractNode * b) : op(op), a(a), b(b) {};
+  ~NodeBinaryOperator();
   virtual AbstractType * evaluate();
 private:
-  ArithmeticOperator op;
+  Operator op;
   AbstractNode * a;
   AbstractNode * b;
 };
 
-AbstractType * NodeArithmeticOperator::evaluate() {
+AbstractType * NodeBinaryOperator::evaluate() {
   AbstractType * t1 = a->evaluate();
   AbstractType * t2 = b->evaluate();
-
-  if (t1->type() != INT || t2->type() != INT) {
-    runtimeError("Using arithmetic operation with non-integer variable");
-  }
-
-  TypeInt * i1 = (TypeInt *) t1;
-  TypeInt * i2 = (TypeInt *) t2;
-
-  switch (op) {
-    case ADD:
-      return new TypeInt(i1->value() + i2->value());
-    case SUB:
-      return new TypeInt(i1->value() - i2->value());
-    case MUL:
-      return new TypeInt(i1->value() * i2->value());
-    case DIV:
-      return new TypeInt(i1->value() / i2->value());
-    case MOD:
-      return new TypeInt(i1->value() % i2->value());
-  }
-  return NULL;
-}
-
-NodeArithmeticOperator::~NodeArithmeticOperator() {
-  delete a;
-  delete b;
-}
-
-class NodeEqualOperator : public AbstractNode {
-public:
-  NodeEqualOperator(EqualOperator op, AbstractNode * a, AbstractNode * b) : op(op), a(a), b(b) {};
-  ~NodeEqualOperator();
-  virtual AbstractType * evaluate();
-private:
-  EqualOperator op;
-  AbstractNode * a;
-  AbstractNode * b;
-};
-
-AbstractType * NodeEqualOperator::evaluate() {
-  AbstractType * t1 = a->evaluate();
-  AbstractType * t2 = b->evaluate();
-
-  if (!isEqualable(t1) || !isEqualable(t2)) {
-    runtimeError("Types are not equalable");
-  }
 
   if (t1->type() != t2->type()) {
-    return new TypeBool(false);
+    runtimeError("Cannot apply operator for different types");
   }
 
-  return new TypeBool(t1->equals(op, t2));
-}
-
-NodeEqualOperator::~NodeEqualOperator() {
-  delete a;
-  delete b;
-}
-
-
-class NodeOrderOperator : public AbstractNode {
-public:
-  NodeOrderOperator(OrderOperator op, AbstractNode * a, AbstractNode * b) : op(op), a(a), b(b) {};
-  ~NodeOrderOperator();
-  virtual AbstractType * evaluate();
-private:
-  OrderOperator op;
-  AbstractNode * a;
-  AbstractNode * b;
-};
-
-AbstractType * NodeOrderOperator::evaluate() {
-  AbstractType * t1 = a->evaluate();
-  AbstractType * t2 = b->evaluate();
-
-  if (!isOrderable(t1) || !isOrderable(t2)) {
-    runtimeError("Types are not orderable");
+  if (!t1->supportsOperator(op)) {
+    runtimeError("Operator not supported by type");
   }
 
-  if (t1->type() != t2->type()) {
-    runtimeError("Order operator can be used only for same types");
-  }
-
-  return new TypeBool(t1->ord(op, t2));
+  return t1->applyOperator(op, t2);
 }
 
-NodeOrderOperator::~NodeOrderOperator() {
-  delete a;
-  delete b;
-}
-
-
-class NodeBooleanOperator : public AbstractNode {
-public:
-  NodeBooleanOperator(BoolOperator op, AbstractNode * a, AbstractNode * b) : op(op), a(a), b(b) {};
-  ~NodeBooleanOperator();
-  virtual AbstractType * evaluate();
-private:
-  BoolOperator op;
-  AbstractNode * a;
-  AbstractNode * b;
-};
-
-AbstractType * NodeBooleanOperator::evaluate() {
-  AbstractType * t1 = a->evaluate();
-  AbstractType * t2 = b->evaluate();
-
-  if (t1->type() != BOOL || t2->type() != BOOL) {
-    runtimeError("Using boolean operation with non-boolean variable");
-  }
-
-  TypeBool * b1 = (TypeBool *) t1;
-  TypeBool * b2 = (TypeBool *) t2;
-
-  switch (op) {
-    case AND:
-      return new TypeBool(b1->value() && b2->value());
-    case OR:
-      return new TypeBool(b1->value() || b2->value());
-  }
-  return new TypeBool(false);
-}
-
-NodeBooleanOperator::~NodeBooleanOperator() {
+NodeBinaryOperator::~NodeBinaryOperator() {
   delete a;
   delete b;
 }
@@ -542,7 +465,7 @@ void example_arithmetic() {
   AbstractNode * nodes[4] = {
     new NodeVariableDefinition("a", new NodeConstant(new TypeInt(5))),
     new NodeVariableDefinition("b", new NodeConstant(new TypeInt(2))),
-    new NodeVariableDefinition("c", new NodeArithmeticOperator(SUB, new NodeVariableName("a"), new NodeVariableName("b"))),
+    new NodeVariableDefinition("c", new NodeBinaryOperator(SUB, new NodeVariableName("a"), new NodeVariableName("b"))),
     new NodePrint(new NodeVariableName("c"))
   };
   NodeBlock * root = new NodeBlock(nodes, 4);
@@ -562,7 +485,7 @@ void example_comparison() {
   AbstractNode * nodes[4] = {
     new NodeVariableDefinition("a", new NodeConstant(new TypeInt(5))),
     new NodeVariableDefinition("b", new NodeConstant(new TypeInt(5))),
-    new NodeVariableDefinition("c", new NodeOrderOperator(GTE, new NodeVariableName("a"), new NodeVariableName("b"))),
+    new NodeVariableDefinition("c", new NodeBinaryOperator(GTE, new NodeVariableName("a"), new NodeVariableName("b"))),
     new NodePrint(new NodeVariableName("c"))
   };
   NodeBlock * root = new NodeBlock(nodes, 4);
@@ -582,12 +505,12 @@ void example_whileCycle() {
   cout << "* Example while cycle. Expected result: lines 0 .. 9" << endl;
   AbstractNode * whileBlockNodes[2] = {
     new NodePrint(new NodeVariableName("i")),
-    new NodeVariableDefinition("i", new NodeArithmeticOperator(ADD, new NodeVariableName("i"), new NodeConstant(new TypeInt(1))))
+    new NodeVariableDefinition("i", new NodeBinaryOperator(ADD, new NodeVariableName("i"), new NodeConstant(new TypeInt(1))))
   };
   AbstractNode * nodes[2] = {
     new NodeVariableDefinition("i", new NodeConstant(new TypeInt(0))),
     new NodeWhile(
-      new NodeOrderOperator(LT, new NodeVariableName("i"), new NodeConstant(new TypeInt(10))),
+      new NodeBinaryOperator(LT, new NodeVariableName("i"), new NodeConstant(new TypeInt(10))),
       new NodeBlock(whileBlockNodes, 2)
     )
   };
@@ -612,7 +535,7 @@ void example_ifElse() {
   AbstractNode * nodes[2] = {
     new NodeVariableDefinition("i", new NodeConstant(new TypeChar('x'))),
     new NodeIfElse(
-      new NodeEqualOperator(EQ, new NodeVariableName("i"), new NodeConstant(new TypeChar('x'))),
+      new NodeBinaryOperator(EQ, new NodeVariableName("i"), new NodeConstant(new TypeChar('x'))),
       new NodeBlock(ifBlockNodes, 1),
       new NodeBlock(elseBlockNodes, 1)
     )
@@ -642,10 +565,10 @@ void example_complicatedCondition() {
     new NodeVariableDefinition("x1", new NodeConstant(new TypeInt(2))),
     new NodeVariableDefinition("x2", new NodeConstant(new TypeInt(5))),
     new NodeIfElse(
-      new NodeNotOperator(new NodeBooleanOperator(
+      new NodeNotOperator(new NodeBinaryOperator(
         AND,
-        new NodeOrderOperator(LT, new NodeVariableName("x1"), new NodeVariableName("x2")),
-        new NodeEqualOperator(EQ, new NodeVariableName("i"), new NodeConstant(new TypeChar('x')))
+        new NodeBinaryOperator(LT, new NodeVariableName("x1"), new NodeVariableName("x2")),
+        new NodeBinaryOperator(EQ, new NodeVariableName("i"), new NodeConstant(new TypeChar('x')))
       )),
       new NodeBlock(ifBlockNodes, 1),
       new NodeBlock(elseBlockNodes, 1)
