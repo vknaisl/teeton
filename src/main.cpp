@@ -228,13 +228,36 @@ AbstractType *TypeInt::applyOperator(Operator op, AbstractType *other) {
 }
 
 
-// global variable storage
-unordered_map<string, AbstractType *> variables;
+class Environment {
+public:
+    void setVariable(string name, AbstractType *value);
+
+    AbstractType *getVariable(string name);
+
+    ~Environment();
+
+private:
+    unordered_map<string, AbstractType *> variables;
+};
+
+Environment::~Environment() {
+    for (auto it : variables) {
+        delete it.second;
+    }
+}
+
+void Environment::setVariable(string name, AbstractType *value) {
+    variables[name] = value;
+}
+
+AbstractType *Environment::getVariable(string name) {
+    return variables[name];
+}
 
 
 class AbstractNode {
 public:
-    virtual AbstractType *evaluate() = 0;
+    virtual AbstractType *evaluate(Environment * env) = 0;
 
     virtual ~AbstractNode() = 0;
 };
@@ -248,16 +271,16 @@ public:
 
     ~NodeBlock();
 
-    virtual AbstractType *evaluate();
+    virtual AbstractType *evaluate(Environment * env);
 
 private:
     AbstractNode **nodes;
     int nodes_count;
 };
 
-AbstractType *NodeBlock::evaluate() {
+AbstractType *NodeBlock::evaluate(Environment * env) {
     for (int i = 0; i < nodes_count; i++) {
-        nodes[i]->evaluate();
+        nodes[i]->evaluate(env);
     }
     return NULL;
 }
@@ -275,15 +298,15 @@ public:
 
     ~NodeVariableDefinition();
 
-    virtual AbstractType *evaluate();
+    virtual AbstractType *evaluate(Environment * env);
 
 private:
     string name;
     AbstractNode *value;
 };
 
-AbstractType *NodeVariableDefinition::evaluate() {
-    variables[name] = value->evaluate();
+AbstractType *NodeVariableDefinition::evaluate(Environment * env) {
+    env->setVariable(name, value->evaluate(env));
     return NULL;
 }
 
@@ -296,14 +319,14 @@ class NodeVariableName : public AbstractNode {
 public:
     NodeVariableName(string name) : name(name) { };
 
-    virtual AbstractType *evaluate();
+    virtual AbstractType *evaluate(Environment * env);
 
 private:
     string name;
 };
 
-AbstractType *NodeVariableName::evaluate() {
-    return variables[name];
+AbstractType *NodeVariableName::evaluate(Environment * env) {
+    return env->getVariable(name);
 }
 
 
@@ -313,14 +336,14 @@ public:
 
     ~NodePrint();
 
-    virtual AbstractType *evaluate();
+    virtual AbstractType *evaluate(Environment * env);
 
 private:
     AbstractNode *value;
 };
 
-AbstractType *NodePrint::evaluate() {
-    AbstractType *evaluated = value->evaluate();
+AbstractType *NodePrint::evaluate(Environment * env) {
+    AbstractType *evaluated = value->evaluate(env);
 
     switch (evaluated->type()) {
         case BOOL:
@@ -348,7 +371,7 @@ public:
 
     ~NodeBinaryOperator();
 
-    virtual AbstractType *evaluate();
+    virtual AbstractType *evaluate(Environment * env);
 
 private:
     Operator op;
@@ -356,9 +379,9 @@ private:
     AbstractNode *b;
 };
 
-AbstractType *NodeBinaryOperator::evaluate() {
-    AbstractType *t1 = a->evaluate();
-    AbstractType *t2 = b->evaluate();
+AbstractType *NodeBinaryOperator::evaluate(Environment * env) {
+    AbstractType *t1 = a->evaluate(env);
+    AbstractType *t2 = b->evaluate(env);
 
     if (t1->type() != t2->type()) {
         runtimeError("Cannot apply operator for different types");
@@ -383,14 +406,14 @@ public:
 
     ~NodeNotOperator();
 
-    virtual AbstractType *evaluate();
+    virtual AbstractType *evaluate(Environment * env);
 
 private:
     AbstractNode *a;
 };
 
-AbstractType *NodeNotOperator::evaluate() {
-    AbstractType *t = a->evaluate();
+AbstractType *NodeNotOperator::evaluate(Environment * env) {
+    AbstractType *t = a->evaluate(env);
 
     if (t->type() != BOOL) {
         runtimeError("Using not operator with non-boolean variable");
@@ -409,13 +432,13 @@ class NodeConstant : public AbstractNode {
 public:
     NodeConstant(AbstractType *value) : value(value) { };
 
-    virtual AbstractType *evaluate();
+    virtual AbstractType *evaluate(Environment * env);
 
 private:
     AbstractType *value;
 };
 
-AbstractType *NodeConstant::evaluate() {
+AbstractType *NodeConstant::evaluate(Environment * env) {
     return value;
 }
 
@@ -426,16 +449,16 @@ public:
 
     ~NodeWhile();
 
-    virtual AbstractType *evaluate();
+    virtual AbstractType *evaluate(Environment * env);
 
 private:
     AbstractNode *condition;
     NodeBlock *block;
 };
 
-AbstractType *NodeWhile::evaluate() {
+AbstractType *NodeWhile::evaluate(Environment * env) {
     for (; ;) {
-        AbstractType *evaluated = condition->evaluate();
+        AbstractType *evaluated = condition->evaluate(env);
 
         if (evaluated->type() != BOOL) {
             runtimeError("Cannot use non-bool value for condition");
@@ -447,7 +470,7 @@ AbstractType *NodeWhile::evaluate() {
             return NULL;
         }
 
-        block->evaluate();
+        block->evaluate(env);
     }
     return NULL;
 }
@@ -466,7 +489,7 @@ public:
 
     ~NodeIfElse();
 
-    virtual AbstractType *evaluate();
+    virtual AbstractType *evaluate(Environment * env);
 
 private:
     AbstractNode *condition;
@@ -474,8 +497,8 @@ private:
     NodeBlock *elseBlock;
 };
 
-AbstractType *NodeIfElse::evaluate() {
-    AbstractType *evaluated = condition->evaluate();
+AbstractType *NodeIfElse::evaluate(Environment * env) {
+    AbstractType *evaluated = condition->evaluate(env);
 
     if (evaluated->type() != BOOL) {
         runtimeError("Cannot use non-bool value for condition");
@@ -484,9 +507,9 @@ AbstractType *NodeIfElse::evaluate() {
     TypeBool *evaluatedBool = (TypeBool *) evaluated;
 
     if (evaluatedBool->value()) {
-        ifBlock->evaluate();
+        ifBlock->evaluate(env);
     } else {
-        elseBlock->evaluate();
+        elseBlock->evaluate(env);
     }
 
     return NULL;
@@ -508,6 +531,7 @@ NodeIfElse::~NodeIfElse() {
  * print(c)
  */
 void example_arithmetic() {
+    Environment * env = new Environment();
     cout << "* Example arithmetic. Expected result: 3" << endl;
     AbstractNode *nodes[4] = {
             new NodeVariableDefinition("a", new NodeConstant(new TypeInt(5))),
@@ -517,8 +541,9 @@ void example_arithmetic() {
             new NodePrint(new NodeVariableName("c"))
     };
     NodeBlock *root = new NodeBlock(nodes, 4);
-    root->evaluate();
+    root->evaluate(env);
     delete root;
+    delete env;
     cout << endl;
 }
 
@@ -529,6 +554,7 @@ void example_arithmetic() {
  * print(c)
  */
 void example_comparison() {
+    Environment * env = new Environment();
     cout << "* Example comparison. Expected result: True" << endl;
     AbstractNode *nodes[4] = {
             new NodeVariableDefinition("a", new NodeConstant(new TypeInt(5))),
@@ -538,8 +564,9 @@ void example_comparison() {
             new NodePrint(new NodeVariableName("c"))
     };
     NodeBlock *root = new NodeBlock(nodes, 4);
-    root->evaluate();
+    root->evaluate(env);
     delete root;
+    delete env;
     cout << endl;
 }
 
@@ -551,6 +578,7 @@ void example_comparison() {
  * }
  */
 void example_whileCycle() {
+    Environment * env = new Environment();
     cout << "* Example while cycle. Expected result: lines 0 .. 9" << endl;
     AbstractNode *whileBlockNodes[2] = {
             new NodePrint(new NodeVariableName("i")),
@@ -565,8 +593,9 @@ void example_whileCycle() {
             )
     };
     NodeBlock *root = new NodeBlock(nodes, 2);
-    root->evaluate();
+    root->evaluate(env);
     delete root;
+    delete env;
     cout << endl;
 }
 
@@ -579,6 +608,7 @@ void example_whileCycle() {
  * }
  */
 void example_ifElse() {
+    Environment * env = new Environment();
     cout << "* Example if else. Expected result: 'a'" << endl;
     AbstractNode *ifBlockNodes[1] = {new NodePrint(new NodeConstant(new TypeChar('a')))};
     AbstractNode *elseBlockNodes[1] = {new NodePrint(new NodeConstant(new TypeChar('n')))};
@@ -591,8 +621,9 @@ void example_ifElse() {
             )
     };
     NodeBlock *root = new NodeBlock(nodes, 2);
-    root->evaluate();
+    root->evaluate(env);
     delete root;
+    delete env;
     cout << endl;
 }
 
@@ -607,6 +638,7 @@ void example_ifElse() {
  * }
  */
 void example_complicatedCondition() {
+    Environment * env = new Environment();
     cout << "* Example complicated condition. Expected result: 'n'" << endl;
     AbstractNode *ifBlockNodes[1] = {new NodePrint(new NodeConstant(new TypeChar('a')))};
     AbstractNode *elseBlockNodes[1] = {new NodePrint(new NodeConstant(new TypeChar('n')))};
@@ -625,8 +657,9 @@ void example_complicatedCondition() {
             )
     };
     NodeBlock *root = new NodeBlock(nodes, 4);
-    root->evaluate();
+    root->evaluate(env);
     delete root;
+    delete env;
     cout << endl;
 }
 
