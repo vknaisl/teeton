@@ -15,7 +15,7 @@ using namespace std;
  * print(c)
  */
 void example_arithmetic() {
-    Environment * env = new Environment();
+    Environment *env = new Environment();
     cout << "* Example arithmetic. Expected result: 3" << endl;
     AbstractNode *nodes[4] = {
             new NodeVariableDefinition("a", new NodeConstant(new TypeInt(5))),
@@ -38,7 +38,7 @@ void example_arithmetic() {
  * print(c)
  */
 void example_comparison() {
-    Environment * env = new Environment();
+    Environment *env = new Environment();
     cout << "* Example comparison. Expected result: True" << endl;
     AbstractNode *nodes[4] = {
             new NodeVariableDefinition("a", new NodeConstant(new TypeInt(5))),
@@ -62,7 +62,7 @@ void example_comparison() {
  * }
  */
 void example_whileCycle() {
-    Environment * env = new Environment();
+    Environment *env = new Environment();
     cout << "* Example while cycle. Expected result: lines 0 .. 9" << endl;
     AbstractNode *whileBlockNodes[2] = {
             new NodePrint(new NodeVariableName("i")),
@@ -92,7 +92,7 @@ void example_whileCycle() {
  * }
  */
 void example_ifElse() {
-    Environment * env = new Environment();
+    Environment *env = new Environment();
     cout << "* Example if else. Expected result: 'a'" << endl;
     AbstractNode *ifBlockNodes[1] = {new NodePrint(new NodeConstant(new TypeChar('a')))};
     AbstractNode *elseBlockNodes[1] = {new NodePrint(new NodeConstant(new TypeChar('n')))};
@@ -122,7 +122,7 @@ void example_ifElse() {
  * }
  */
 void example_complicatedCondition() {
-    Environment * env = new Environment();
+    Environment *env = new Environment();
     cout << "* Example complicated condition. Expected result: 'n'" << endl;
     AbstractNode *ifBlockNodes[1] = {new NodePrint(new NodeConstant(new TypeChar('a')))};
     AbstractNode *elseBlockNodes[1] = {new NodePrint(new NodeConstant(new TypeChar('n')))};

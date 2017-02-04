@@ -6,7 +6,7 @@
 
 class AbstractNode {
 public:
-    virtual AbstractType *evaluate(Environment * env) = 0;
+    virtual AbstractType *evaluate(Environment *env) = 0;
 
     virtual ~AbstractNode() = 0;
 };
@@ -15,11 +15,11 @@ public:
 
 class NodeBlock : public AbstractNode {
 public:
-    NodeBlock(AbstractNode **nodes, int nodes_count) : nodes(nodes), nodes_count(nodes_count) { };
+    NodeBlock(AbstractNode **nodes, int nodes_count) : nodes(nodes), nodes_count(nodes_count) {};
 
     ~NodeBlock();
 
-    virtual AbstractType *evaluate(Environment * env);
+    virtual AbstractType *evaluate(Environment *env);
 
 private:
     AbstractNode **nodes;
@@ -30,11 +30,11 @@ private:
 
 class NodeVariableDefinition : public AbstractNode {
 public:
-    NodeVariableDefinition(std::string name, AbstractNode *value) : name(name), value(value) { };
+    NodeVariableDefinition(std::string name, AbstractNode *value) : name(name), value(value) {};
 
     ~NodeVariableDefinition();
 
-    virtual AbstractType *evaluate(Environment * env);
+    virtual AbstractType *evaluate(Environment *env);
 
 private:
     std::string name;
@@ -45,9 +45,9 @@ private:
 
 class NodeVariableName : public AbstractNode {
 public:
-    NodeVariableName(std::string name) : name(name) { };
+    NodeVariableName(std::string name) : name(name) {};
 
-    virtual AbstractType *evaluate(Environment * env);
+    virtual AbstractType *evaluate(Environment *env);
 
 private:
     std::string name;
@@ -57,11 +57,11 @@ private:
 
 class NodePrint : public AbstractNode {
 public:
-    NodePrint(AbstractNode *value) : value(value) { };
+    NodePrint(AbstractNode *value) : value(value) {};
 
     ~NodePrint();
 
-    virtual AbstractType *evaluate(Environment * env);
+    virtual AbstractType *evaluate(Environment *env);
 
 private:
     AbstractNode *value;
@@ -71,11 +71,11 @@ private:
 
 class NodeBinaryOperator : public AbstractNode {
 public:
-    NodeBinaryOperator(Operator op, AbstractNode *a, AbstractNode *b) : op(op), a(a), b(b) { };
+    NodeBinaryOperator(Operator op, AbstractNode *a, AbstractNode *b) : op(op), a(a), b(b) {};
 
     ~NodeBinaryOperator();
 
-    virtual AbstractType *evaluate(Environment * env);
+    virtual AbstractType *evaluate(Environment *env);
 
 private:
     Operator op;
@@ -87,11 +87,11 @@ private:
 
 class NodeNotOperator : public AbstractNode {
 public:
-    NodeNotOperator(AbstractNode *a) : a(a) { };
+    NodeNotOperator(AbstractNode *a) : a(a) {};
 
     ~NodeNotOperator();
 
-    virtual AbstractType *evaluate(Environment * env);
+    virtual AbstractType *evaluate(Environment *env);
 
 private:
     AbstractNode *a;
@@ -101,9 +101,9 @@ private:
 
 class NodeConstant : public AbstractNode {
 public:
-    NodeConstant(AbstractType *value) : value(value) { };
+    NodeConstant(AbstractType *value) : value(value) {};
 
-    virtual AbstractType *evaluate(Environment * env);
+    virtual AbstractType *evaluate(Environment *env);
 
 private:
     AbstractType *value;
@@ -113,11 +113,11 @@ private:
 
 class NodeWhile : public AbstractNode {
 public:
-    NodeWhile(AbstractNode *condition, NodeBlock *block) : condition(condition), block(block) { };
+    NodeWhile(AbstractNode *condition, NodeBlock *block) : condition(condition), block(block) {};
 
     ~NodeWhile();
 
-    virtual AbstractType *evaluate(Environment * env);
+    virtual AbstractType *evaluate(Environment *env);
 
 private:
     AbstractNode *condition;

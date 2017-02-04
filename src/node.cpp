@@ -1,12 +1,11 @@
 #include "environment.h"
 #include "node.h"
-#include "type.h"
 
 using namespace std;
 
-inline AbstractNode::~AbstractNode() { }
+inline AbstractNode::~AbstractNode() {}
 
-AbstractType *NodeBlock::evaluate(Environment * env) {
+AbstractType *NodeBlock::evaluate(Environment *env) {
     for (int i = 0; i < nodes_count; i++) {
         nodes[i]->evaluate(env);
     }
@@ -21,7 +20,7 @@ NodeBlock::~NodeBlock() {
 
 // -----------------------------------------------------------------------------
 
-AbstractType *NodeVariableDefinition::evaluate(Environment * env) {
+AbstractType *NodeVariableDefinition::evaluate(Environment *env) {
     env->setVariable(name, value->evaluate(env));
     return NULL;
 }
@@ -32,13 +31,13 @@ NodeVariableDefinition::~NodeVariableDefinition() {
 
 // -----------------------------------------------------------------------------
 
-AbstractType *NodeVariableName::evaluate(Environment * env) {
+AbstractType *NodeVariableName::evaluate(Environment *env) {
     return env->getVariable(name);
 }
 
 // -----------------------------------------------------------------------------
 
-AbstractType *NodePrint::evaluate(Environment * env) {
+AbstractType *NodePrint::evaluate(Environment *env) {
     AbstractType *evaluated = value->evaluate(env);
 
     switch (evaluated->type()) {
@@ -62,7 +61,7 @@ NodePrint::~NodePrint() {
 
 // -----------------------------------------------------------------------------
 
-AbstractType *NodeBinaryOperator::evaluate(Environment * env) {
+AbstractType *NodeBinaryOperator::evaluate(Environment *env) {
     AbstractType *t1 = a->evaluate(env);
     AbstractType *t2 = b->evaluate(env);
 
@@ -84,7 +83,7 @@ NodeBinaryOperator::~NodeBinaryOperator() {
 
 // -----------------------------------------------------------------------------
 
-AbstractType *NodeNotOperator::evaluate(Environment * env) {
+AbstractType *NodeNotOperator::evaluate(Environment *env) {
     AbstractType *t = a->evaluate(env);
 
     if (t->type() != BOOL) {
@@ -101,14 +100,14 @@ NodeNotOperator::~NodeNotOperator() {
 
 // -----------------------------------------------------------------------------
 
-AbstractType *NodeConstant::evaluate(Environment * env) {
+AbstractType *NodeConstant::evaluate(Environment *env) {
     return value;
 }
 
 // -----------------------------------------------------------------------------
 
-AbstractType *NodeWhile::evaluate(Environment * env) {
-    for (; ;) {
+AbstractType *NodeWhile::evaluate(Environment *env) {
+    for (;;) {
         AbstractType *evaluated = condition->evaluate(env);
 
         if (evaluated->type() != BOOL) {
@@ -133,7 +132,7 @@ NodeWhile::~NodeWhile() {
 
 // -----------------------------------------------------------------------------
 
-AbstractType *NodeIfElse::evaluate(Environment * env) {
+AbstractType *NodeIfElse::evaluate(Environment *env) {
     AbstractType *evaluated = condition->evaluate(env);
 
     if (evaluated->type() != BOOL) {

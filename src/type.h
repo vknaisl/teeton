@@ -17,7 +17,7 @@ public:
 
 class TypeBool : public AbstractType {
 public:
-    TypeBool(bool value) : _value(value) { };
+    TypeBool(bool value) : _value(value) {};
 
     virtual Type type();
 
@@ -35,7 +35,7 @@ private:
 
 class TypeChar : public AbstractType {
 public:
-    TypeChar(char value) : _value(value) { };
+    TypeChar(char value) : _value(value) {};
 
     virtual Type type();
 
@@ -53,7 +53,7 @@ private:
 
 class TypeInt : public AbstractType {
 public:
-    TypeInt(int value) : _value(value) { };
+    TypeInt(int value) : _value(value) {};
 
     virtual Type type();
 
