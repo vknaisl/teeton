@@ -39,19 +39,7 @@ AbstractType *NodeVariableName::evaluate(Environment *env) {
 
 AbstractType *NodePrint::evaluate(Environment *env) {
     AbstractType *evaluated = value->evaluate(env);
-
-    switch (evaluated->type()) {
-        case BOOL:
-            cout << (((TypeBool *) evaluated)->value() ? "True" : "False") << endl;
-            break;
-        case CHAR:
-            cout << ((TypeChar *) evaluated)->value() << endl;
-            break;
-        case INT:
-            cout << ((TypeInt *) evaluated)->value() << endl;
-            break;
-    }
-
+    cout << evaluated->toString() << endl;
     return NULL;
 }
 

@@ -10,7 +10,7 @@ enum Operator {
 };
 
 enum Type {
-    CHAR, BOOL, INT
+    CHAR, BOOL, INT, LIST
 };
 
 #endif //TEETON_ENUMS_H

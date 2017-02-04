@@ -158,7 +158,7 @@ void example_complicatedCondition() {
 void example_referenceComparison() {
     Environment *env = new Environment();
     cout << "* Example reference comparison. Expected result: True, False, True" << endl;
-    AbstractNode * nodes[5] = {
+    AbstractNode *nodes[5] = {
             new NodeVariableDefinition("a", new NodeConstant(new TypeChar('a'))),
             new NodeVariableDefinition("b", new NodeConstant(new TypeChar('a'))),
             new NodePrint(new NodeBinaryOperator(EQ, new NodeVariableName("a"), new NodeVariableName("b"))),
@@ -185,7 +185,7 @@ void example_referenceComparison() {
 void example_readingInput() {
     Environment *env = new Environment();
     cout << "* Example reading user input" << endl;
-    AbstractNode * nodes[6] = {
+    AbstractNode *nodes[6] = {
             new NodeVariableDefinition("a", new NodeScanInt()),
             new NodePrint(new NodeVariableName("a")),
             new NodeVariableDefinition("b", new NodeScanChar()),
@@ -220,7 +220,8 @@ void example_break() {
     };
 
     AbstractNode *elseBlock[1] = {
-            new NodeVariableDefinition("i", new NodeBinaryOperator(ADD, new NodeVariableName("i"), new NodeConstant(new TypeInt(1))))
+            new NodeVariableDefinition("i", new NodeBinaryOperator(ADD, new NodeVariableName("i"),
+                                                                   new NodeConstant(new TypeInt(1))))
     };
 
     AbstractNode *whileBlock[2] = {
@@ -232,11 +233,77 @@ void example_break() {
             )
     };
 
-    AbstractNode * nodes[6] = {
+    AbstractNode *nodes[2] = {
             new NodeVariableDefinition("i", new NodeConstant(new TypeInt(0))),
             new NodeWhile(new NodeConstant(new TypeBool(true)), new NodeBlock(whileBlock, 2))
     };
+    NodeBlock *root = new NodeBlock(nodes, 2);
+    root->evaluate(env);
+    delete root;
+    delete env;
+    cout << endl;
+}
+
+void example_list() {
+    Environment *env = new Environment();
+    cout << "* Example list. Expected output: [1, 2, 3] [1, 2] ['a', 'b']" << endl;
+
+    vector<AbstractType *> * xs = new vector<AbstractType *>();
+    xs->push_back(new TypeInt(1));
+    xs->push_back(new TypeInt(2));
+
+    vector<AbstractType *> * ys = new vector<AbstractType *>();
+    ys->push_back(new TypeInt(3));
+
+    vector<AbstractType *> * zs = new vector<AbstractType *>();
+    zs->push_back(new TypeChar('a'));
+    zs->push_back(new TypeChar('b'));
+
+    AbstractNode *nodes[6] = {
+            new NodeVariableDefinition("xs", new NodeConstant(new TypeList(xs))),
+            new NodeVariableDefinition("ys", new NodeConstant(new TypeList(ys))),
+            new NodeVariableDefinition("zs", new NodeConstant(new TypeList(zs))),
+            new NodePrint(new NodeBinaryOperator(ADD, new NodeVariableName("xs"), new NodeVariableName("ys"))),
+            new NodePrint(new NodeVariableName("xs")),
+            new NodePrint(new NodeVariableName("zs"))
+    };
+
     NodeBlock *root = new NodeBlock(nodes, 6);
+    root->evaluate(env);
+    delete root;
+    delete env;
+    cout << endl;
+}
+
+void example_listComparison() {
+    Environment *env = new Environment();
+    cout << "* Example list comparison. Expected output: False, True, False, True, False True" << endl;
+
+    vector<AbstractType *> * xs = new vector<AbstractType *>();
+    xs->push_back(new TypeChar('D'));
+    xs->push_back(new TypeChar('o'));
+    xs->push_back(new TypeChar('g'));
+    xs->push_back(new TypeChar('s'));
+
+    vector<AbstractType *> * ys = new vector<AbstractType *>();
+    ys->push_back(new TypeChar('F'));
+    ys->push_back(new TypeChar('i'));
+    ys->push_back(new TypeChar('s'));
+    ys->push_back(new TypeChar('h'));
+
+
+    AbstractNode *nodes[8] = {
+            new NodeVariableDefinition("xs", new NodeConstant(new TypeList(xs))),
+            new NodeVariableDefinition("ys", new NodeConstant(new TypeList(ys))),
+            new NodePrint(new NodeBinaryOperator(EQ, new NodeVariableName("xs"), new NodeVariableName("ys"))),
+            new NodePrint(new NodeBinaryOperator(NEQ, new NodeVariableName("xs"), new NodeVariableName("ys"))),
+            new NodePrint(new NodeBinaryOperator(GT, new NodeVariableName("xs"), new NodeVariableName("ys"))),
+            new NodePrint(new NodeBinaryOperator(LT, new NodeVariableName("xs"), new NodeVariableName("ys"))),
+            new NodePrint(new NodeBinaryOperator(GTE, new NodeVariableName("xs"), new NodeVariableName("ys"))),
+            new NodePrint(new NodeBinaryOperator(LTE, new NodeVariableName("xs"), new NodeVariableName("ys")))
+    };
+
+    NodeBlock *root = new NodeBlock(nodes, 8);
     root->evaluate(env);
     delete root;
     delete env;
@@ -252,5 +319,7 @@ int main() {
     example_referenceComparison();
 //    example_readingInput();
     example_break();
+    example_list();
+    example_listComparison();
     return 0;
 }
