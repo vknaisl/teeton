@@ -2,6 +2,7 @@
 #define TEETON_NODE_H
 
 
+#include <iostream>
 #include <string>
 
 class AbstractNode {
@@ -15,7 +16,7 @@ public:
 
 class NodeBlock : public AbstractNode {
 public:
-    NodeBlock(AbstractNode **nodes, int nodes_count) : nodes(nodes), nodes_count(nodes_count) {};
+    NodeBlock(AbstractNode **nodes, int nodes_count) : nodes(nodes), nodes_count(nodes_count) { };
 
     ~NodeBlock();
 
@@ -30,7 +31,7 @@ private:
 
 class NodeVariableDefinition : public AbstractNode {
 public:
-    NodeVariableDefinition(std::string name, AbstractNode *value) : name(name), value(value) {};
+    NodeVariableDefinition(std::string name, AbstractNode *value) : name(name), value(value) { };
 
     ~NodeVariableDefinition();
 
@@ -45,7 +46,7 @@ private:
 
 class NodeVariableName : public AbstractNode {
 public:
-    NodeVariableName(std::string name) : name(name) {};
+    NodeVariableName(std::string name) : name(name) { };
 
     virtual AbstractType *evaluate(Environment *env);
 
@@ -57,7 +58,7 @@ private:
 
 class NodePrint : public AbstractNode {
 public:
-    NodePrint(AbstractNode *value) : value(value) {};
+    NodePrint(AbstractNode *value) : value(value) { };
 
     ~NodePrint();
 
@@ -71,7 +72,7 @@ private:
 
 class NodeBinaryOperator : public AbstractNode {
 public:
-    NodeBinaryOperator(Operator op, AbstractNode *a, AbstractNode *b) : op(op), a(a), b(b) {};
+    NodeBinaryOperator(Operator op, AbstractNode *a, AbstractNode *b) : op(op), a(a), b(b) { };
 
     ~NodeBinaryOperator();
 
@@ -87,7 +88,7 @@ private:
 
 class NodeNotOperator : public AbstractNode {
 public:
-    NodeNotOperator(AbstractNode *a) : a(a) {};
+    NodeNotOperator(AbstractNode *a) : a(a) { };
 
     ~NodeNotOperator();
 
@@ -101,7 +102,7 @@ private:
 
 class NodeConstant : public AbstractNode {
 public:
-    NodeConstant(AbstractType *value) : value(value) {};
+    NodeConstant(AbstractType *value) : value(value) { };
 
     virtual AbstractType *evaluate(Environment *env);
 
@@ -113,7 +114,7 @@ private:
 
 class NodeWhile : public AbstractNode {
 public:
-    NodeWhile(AbstractNode *condition, NodeBlock *block) : condition(condition), block(block) {};
+    NodeWhile(AbstractNode *condition, NodeBlock *block) : condition(condition), block(block) { };
 
     ~NodeWhile();
 
@@ -130,7 +131,7 @@ class NodeIfElse : public AbstractNode {
 public:
     NodeIfElse(AbstractNode *condition, NodeBlock *ifBlock, NodeBlock *elseBlock) : condition(condition),
                                                                                     ifBlock(ifBlock),
-                                                                                    elseBlock(elseBlock) {};
+                                                                                    elseBlock(elseBlock) { };
 
     ~NodeIfElse();
 
@@ -140,6 +141,20 @@ private:
     AbstractNode *condition;
     NodeBlock *ifBlock;
     NodeBlock *elseBlock;
+};
+
+// -----------------------------------------------------------------------------
+
+class NodeScanInt : public AbstractNode {
+public:
+    virtual AbstractType *evaluate(Environment *env);
+};
+
+// -----------------------------------------------------------------------------
+
+class NodeScanChar : public AbstractNode {
+public:
+    virtual AbstractType *evaluate(Environment *env);
 };
 
 #endif //TEETON_NODE_H

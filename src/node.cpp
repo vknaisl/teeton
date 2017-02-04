@@ -3,7 +3,7 @@
 
 using namespace std;
 
-inline AbstractNode::~AbstractNode() {}
+inline AbstractNode::~AbstractNode() { }
 
 AbstractType *NodeBlock::evaluate(Environment *env) {
     for (int i = 0; i < nodes_count; i++) {
@@ -107,7 +107,7 @@ AbstractType *NodeConstant::evaluate(Environment *env) {
 // -----------------------------------------------------------------------------
 
 AbstractType *NodeWhile::evaluate(Environment *env) {
-    for (;;) {
+    for (; ;) {
         AbstractType *evaluated = condition->evaluate(env);
 
         if (evaluated->type() != BOOL) {
@@ -153,4 +153,20 @@ AbstractType *NodeIfElse::evaluate(Environment *env) {
 NodeIfElse::~NodeIfElse() {
     delete ifBlock;
     delete elseBlock;
+}
+
+// -----------------------------------------------------------------------------
+
+AbstractType *NodeScanInt::evaluate(Environment *env) {
+    int number;
+    cin >> number;
+    return new TypeInt(number);
+}
+
+// -----------------------------------------------------------------------------
+
+AbstractType *NodeScanChar::evaluate(Environment *env) {
+    char character;
+    cin >> character;
+    return new TypeChar(character);
 }

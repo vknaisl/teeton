@@ -172,6 +172,34 @@ void example_referenceComparison() {
     cout << endl;
 }
 
+/**
+ * var a = scan_int()
+ * print(a)
+ *
+ * var b = scan_char()
+ * print(b)
+ *
+ * var sum = scan_int() + scan_int()
+ * print(sum)
+ */
+void example_readingInput() {
+    Environment *env = new Environment();
+    cout << "* Example reading user input" << endl;
+    AbstractNode * nodes[6] = {
+            new NodeVariableDefinition("a", new NodeScanInt()),
+            new NodePrint(new NodeVariableName("a")),
+            new NodeVariableDefinition("b", new NodeScanChar()),
+            new NodePrint(new NodeVariableName("b")),
+            new NodeVariableDefinition("sum", new NodeBinaryOperator(ADD, new NodeScanInt(), new NodeScanInt())),
+            new NodePrint(new NodeVariableName("sum"))
+    };
+    NodeBlock *root = new NodeBlock(nodes, 6);
+    root->evaluate(env);
+    delete root;
+    delete env;
+    cout << endl;
+}
+
 int main() {
     example_arithmetic();
     example_comparison();
@@ -179,5 +207,6 @@ int main() {
     example_ifElse();
     example_complicatedCondition();
     example_referenceComparison();
+    example_readingInput();
     return 0;
 }
