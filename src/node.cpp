@@ -120,7 +120,11 @@ AbstractType *NodeWhile::evaluate(Environment *env) {
             return NULL;
         }
 
-        block->evaluate(env);
+        try {
+            block->evaluate(env);
+        } catch (NodeBreak::BreakException e) {
+            return NULL;
+        }
     }
     return NULL;
 }
@@ -169,4 +173,10 @@ AbstractType *NodeScanChar::evaluate(Environment *env) {
     char character;
     cin >> character;
     return new TypeChar(character);
+}
+
+// -----------------------------------------------------------------------------
+
+AbstractType *NodeBreak::evaluate(Environment *env) {
+    throw breakException;
 }

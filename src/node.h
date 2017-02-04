@@ -3,7 +3,7 @@
 
 
 #include <iostream>
-#include <string>
+#include <exception>
 
 class AbstractNode {
 public:
@@ -155,6 +155,14 @@ public:
 class NodeScanChar : public AbstractNode {
 public:
     virtual AbstractType *evaluate(Environment *env);
+};
+
+// -----------------------------------------------------------------------------
+
+class NodeBreak : public AbstractNode {
+public:
+    virtual AbstractType *evaluate(Environment *env);
+    class BreakException : public std::exception {} breakException;
 };
 
 #endif //TEETON_NODE_H

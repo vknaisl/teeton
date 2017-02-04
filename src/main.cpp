@@ -200,6 +200,49 @@ void example_readingInput() {
     cout << endl;
 }
 
+
+/**
+ * var i = 0
+ * while(true) {
+ *   print(i)
+ *   if (i > 3) {
+ *     break
+ *   } else {
+ *     i = i + 1
+ *   }
+ * }
+ */
+void example_break() {
+    Environment *env = new Environment();
+    cout << "* Example break. Expected result: lines [0 .. 4]" << endl;
+    AbstractNode *ifBlock[1] = {
+            new NodeBreak()
+    };
+
+    AbstractNode *elseBlock[1] = {
+            new NodeVariableDefinition("i", new NodeBinaryOperator(ADD, new NodeVariableName("i"), new NodeConstant(new TypeInt(1))))
+    };
+
+    AbstractNode *whileBlock[2] = {
+            new NodePrint(new NodeVariableName("i")),
+            new NodeIfElse(
+                    new NodeBinaryOperator(GT, new NodeVariableName("i"), new NodeConstant(new TypeInt(3))),
+                    new NodeBlock(ifBlock, 1),
+                    new NodeBlock(elseBlock, 1)
+            )
+    };
+
+    AbstractNode * nodes[6] = {
+            new NodeVariableDefinition("i", new NodeConstant(new TypeInt(0))),
+            new NodeWhile(new NodeConstant(new TypeBool(true)), new NodeBlock(whileBlock, 2))
+    };
+    NodeBlock *root = new NodeBlock(nodes, 6);
+    root->evaluate(env);
+    delete root;
+    delete env;
+    cout << endl;
+}
+
 int main() {
     example_arithmetic();
     example_comparison();
@@ -207,6 +250,7 @@ int main() {
     example_ifElse();
     example_complicatedCondition();
     example_referenceComparison();
-    example_readingInput();
+//    example_readingInput();
+    example_break();
     return 0;
 }
