@@ -19,8 +19,7 @@ NodeBlock::~NodeBlock() {
     }
 }
 
-
-
+// -----------------------------------------------------------------------------
 
 AbstractType *NodeVariableDefinition::evaluate(Environment * env) {
     env->setVariable(name, value->evaluate(env));
@@ -31,15 +30,13 @@ NodeVariableDefinition::~NodeVariableDefinition() {
     delete value;
 }
 
-
-
+// -----------------------------------------------------------------------------
 
 AbstractType *NodeVariableName::evaluate(Environment * env) {
     return env->getVariable(name);
 }
 
-
-
+// -----------------------------------------------------------------------------
 
 AbstractType *NodePrint::evaluate(Environment * env) {
     AbstractType *evaluated = value->evaluate(env);
@@ -63,8 +60,7 @@ NodePrint::~NodePrint() {
     delete value;
 }
 
-
-
+// -----------------------------------------------------------------------------
 
 AbstractType *NodeBinaryOperator::evaluate(Environment * env) {
     AbstractType *t1 = a->evaluate(env);
@@ -86,8 +82,7 @@ NodeBinaryOperator::~NodeBinaryOperator() {
     delete b;
 }
 
-
-
+// -----------------------------------------------------------------------------
 
 AbstractType *NodeNotOperator::evaluate(Environment * env) {
     AbstractType *t = a->evaluate(env);
@@ -104,15 +99,13 @@ NodeNotOperator::~NodeNotOperator() {
     delete a;
 }
 
-
-
+// -----------------------------------------------------------------------------
 
 AbstractType *NodeConstant::evaluate(Environment * env) {
     return value;
 }
 
-
-
+// -----------------------------------------------------------------------------
 
 AbstractType *NodeWhile::evaluate(Environment * env) {
     for (; ;) {
@@ -138,8 +131,7 @@ NodeWhile::~NodeWhile() {
     delete block;
 }
 
-
-
+// -----------------------------------------------------------------------------
 
 AbstractType *NodeIfElse::evaluate(Environment * env) {
     AbstractType *evaluated = condition->evaluate(env);

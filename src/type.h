@@ -13,6 +13,8 @@ public:
     virtual AbstractType *applyOperator(Operator op, AbstractType *other);
 };
 
+// -----------------------------------------------------------------------------
+
 class TypeBool : public AbstractType {
 public:
     TypeBool(bool value) : _value(value) { };
@@ -29,6 +31,8 @@ private:
     bool _value;
 };
 
+// -----------------------------------------------------------------------------
+
 class TypeChar : public AbstractType {
 public:
     TypeChar(char value) : _value(value) { };
@@ -44,6 +48,8 @@ public:
 private:
     char _value;
 };
+
+// -----------------------------------------------------------------------------
 
 class TypeInt : public AbstractType {
 public:

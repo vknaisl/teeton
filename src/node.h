@@ -11,6 +11,8 @@ public:
     virtual ~AbstractNode() = 0;
 };
 
+// -----------------------------------------------------------------------------
+
 class NodeBlock : public AbstractNode {
 public:
     NodeBlock(AbstractNode **nodes, int nodes_count) : nodes(nodes), nodes_count(nodes_count) { };
@@ -23,6 +25,8 @@ private:
     AbstractNode **nodes;
     int nodes_count;
 };
+
+// -----------------------------------------------------------------------------
 
 class NodeVariableDefinition : public AbstractNode {
 public:
@@ -37,6 +41,8 @@ private:
     AbstractNode *value;
 };
 
+// -----------------------------------------------------------------------------
+
 class NodeVariableName : public AbstractNode {
 public:
     NodeVariableName(std::string name) : name(name) { };
@@ -46,6 +52,8 @@ public:
 private:
     std::string name;
 };
+
+// -----------------------------------------------------------------------------
 
 class NodePrint : public AbstractNode {
 public:
@@ -58,6 +66,8 @@ public:
 private:
     AbstractNode *value;
 };
+
+// -----------------------------------------------------------------------------
 
 class NodeBinaryOperator : public AbstractNode {
 public:
@@ -73,6 +83,8 @@ private:
     AbstractNode *b;
 };
 
+// -----------------------------------------------------------------------------
+
 class NodeNotOperator : public AbstractNode {
 public:
     NodeNotOperator(AbstractNode *a) : a(a) { };
@@ -85,6 +97,8 @@ private:
     AbstractNode *a;
 };
 
+// -----------------------------------------------------------------------------
+
 class NodeConstant : public AbstractNode {
 public:
     NodeConstant(AbstractType *value) : value(value) { };
@@ -94,6 +108,8 @@ public:
 private:
     AbstractType *value;
 };
+
+// -----------------------------------------------------------------------------
 
 class NodeWhile : public AbstractNode {
 public:
@@ -107,6 +123,8 @@ private:
     AbstractNode *condition;
     NodeBlock *block;
 };
+
+// -----------------------------------------------------------------------------
 
 class NodeIfElse : public AbstractNode {
 public:
