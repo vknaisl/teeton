@@ -195,4 +195,20 @@ private:
     AbstractNode *expression;
 };
 
+// -----------------------------------------------------------------------------
+
+class NodeAppend : public AbstractNode {
+public:
+    NodeAppend(AbstractNode *listExpression, AbstractNode *valueExpression) : listExpression(listExpression),
+                                                                              valueExpression(valueExpression) { };
+
+    ~NodeAppend();
+
+    virtual AbstractType *evaluate(Environment *env);
+
+private:
+    AbstractNode *listExpression;
+    AbstractNode *valueExpression;
+};
+
 #endif //TEETON_NODE_H

@@ -251,3 +251,23 @@ AbstractType *NodeLen::evaluate(Environment *env) {
 
     return env->allocInt((int) list->value()->size());
 }
+
+// -----------------------------------------------------------------------------
+
+NodeAppend::~NodeAppend() {
+    delete listExpression;
+    delete valueExpression;
+}
+
+AbstractType *NodeAppend::evaluate(Environment *env) {
+    AbstractType *listResult = listExpression->evaluate(env);
+    AbstractType *valueResult = valueExpression->evaluate(env);
+
+    if (listResult->type() != LIST) {
+        runtimeError("first argument of append must be a list");
+    }
+
+    TypeList *list = (TypeList *) listResult;
+    list->value()->push_back(valueResult);
+    return nullptr;
+}

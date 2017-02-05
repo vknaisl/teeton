@@ -351,6 +351,32 @@ void example_listLen() {
 }
 
 /**
+ * var xs = [1, 2]
+ * append(xs, 3)
+ * print(xs)
+ */
+void example_listAppend() {
+    Environment *env = new Environment();
+    cout << "* Example list len. Expected output: [1, 2, 3]" << endl;
+
+    vector<AbstractType *> * xs = new vector<AbstractType *>();
+    xs->push_back(new TypeInt(1));
+    xs->push_back(new TypeInt(2));
+
+    AbstractNode *nodes[] = {
+            new NodeVariableDefinition("xs", new NodeConstant(new TypeList(xs))),
+            new NodeAppend(new NodeVariableName("xs"), new NodeConstant(new TypeInt(3))),
+            new NodePrint(new NodeVariableName("xs"))
+    };
+
+    NodeBlock *root = new NodeBlock(nodes, 3);
+    root->evaluate(env);
+    delete root;
+    delete env;
+    cout << endl;
+}
+
+/**
  * var i = 0
  * while(i < 1000) {
  *   var a = 12
@@ -397,5 +423,6 @@ int main() {
     example_listComparison();
     example_garbageCollector();
     example_listLen();
+    example_listAppend();
     return 0;
 }
