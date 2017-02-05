@@ -60,15 +60,14 @@ var b = scan_int()
 ```
 ## Build-in functions
 ```
-scan_int() 	   : () -> int
-scan_char()    : () -> char
-scan_string()  : () -> list of chars
-print(...) 	   : () -> nothing
-println(...)   : () -> nothing
-type() 	  	   : () -> type of variable
-list()		   : (...) -> list
-create_list()  : (size, fill_value) -> list
-len(a)         : (list) -> int
+scan_int	: () -> int
+scan_char	: () -> char
+scan_string	: () -> list of chars
+print		: (any) -> nothing
+println		: (any) -> nothing
+list		: (...any) -> list
+append		: (list, any) -> list
+len			: (list) -> int
 ```
 
 ## Build-in operators
