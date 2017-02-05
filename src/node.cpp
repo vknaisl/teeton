@@ -208,6 +208,23 @@ AbstractType *NodeScanChar::evaluate(Environment *env) {
 
 // -----------------------------------------------------------------------------
 
+AbstractType *NodeScanString::evaluate(Environment *env) {
+    string input;
+    cin >> input;
+
+    vector<AbstractType *> *list = new vector<AbstractType *>();
+
+    for (char &c : input) {
+        list->push_back(env->allocChar(c));
+    }
+
+    return env->allocList(list);
+}
+
+// -----------------------------------------------------------------------------
+
 AbstractType *NodeBreak::evaluate(Environment *env) {
     throw breakException;
 }
+
+

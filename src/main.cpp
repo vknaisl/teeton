@@ -200,6 +200,23 @@ void example_readingInput() {
     cout << endl;
 }
 
+/**
+ * var x = scan_string()
+ * print(x)
+ */
+void example_scanString() {
+    Environment *env = new Environment();
+    cout << "* Example scan string" << endl;
+    AbstractNode *nodes[2] = {
+            new NodeVariableDefinition("x", new NodeScanString()),
+            new NodePrint(new NodeVariableName("x"))
+    };
+    NodeBlock *root = new NodeBlock(nodes, 2);
+    root->evaluate(env);
+    delete root;
+    delete env;
+    cout << endl;
+}
 
 /**
  * var i = 0
@@ -351,6 +368,7 @@ int main() {
     example_complicatedCondition();
     example_referenceComparison();
 //    example_readingInput();
+//    example_scanString();
     example_break();
     example_list();
     example_listComparison();

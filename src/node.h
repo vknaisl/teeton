@@ -165,6 +165,13 @@ public:
 
 // -----------------------------------------------------------------------------
 
+class NodeScanString : public AbstractNode {
+public:
+    virtual AbstractType *evaluate(Environment *env);
+};
+
+// -----------------------------------------------------------------------------
+
 class NodeBreak : public AbstractNode {
 public:
     virtual AbstractType *evaluate(Environment *env);
