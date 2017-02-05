@@ -310,6 +310,39 @@ void example_listComparison() {
     cout << endl;
 }
 
+/**
+ * var i = 0
+ * while(i < 1000) {
+ *   var a = 12
+ *   i = i + 1
+ * }
+ */
+void example_garbageCollector() {
+    cout << "* Example garbage collector. Should not crash :)" << endl;
+    Environment *env = new Environment(16);
+
+    AbstractNode *whileBody[] = {
+            new NodeVariableDefinition("a", new NodeConstant(new TypeInt(12))),
+            new NodeVariableDefinition("i", new NodeBinaryOperator(ADD, new NodeVariableName("i"), new NodeConstant(new TypeInt(1))))
+    };
+
+
+    AbstractNode *nodes[] = {
+            new NodeVariableDefinition("i", new NodeConstant(new TypeInt(0))),
+            new NodeWhile(
+                    new NodeBinaryOperator(LT, new NodeVariableName("i"), new NodeConstant(new TypeInt(1000))),
+                    new NodeBlock(whileBody, 2)
+            )
+    };
+
+    NodeBlock *root = new NodeBlock(nodes, 2);
+    root->evaluate(env);
+    delete root;
+    delete env;
+    cout << "done" << endl;
+}
+
+
 int main() {
     example_arithmetic();
     example_comparison();
@@ -321,5 +354,6 @@ int main() {
     example_break();
     example_list();
     example_listComparison();
+    example_garbageCollector();
     return 0;
 }

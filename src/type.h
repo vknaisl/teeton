@@ -22,6 +22,8 @@ public:
     virtual AbstractType *applyOperator(Operator op, AbstractType *other, Environment *env);
 
     virtual std::string toString() = 0;
+
+    bool marked = false;
 };
 
 // -----------------------------------------------------------------------------
