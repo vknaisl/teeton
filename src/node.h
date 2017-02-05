@@ -181,4 +181,18 @@ public:
     } breakException;
 };
 
+// -----------------------------------------------------------------------------
+
+class NodeLen : public AbstractNode {
+public:
+    NodeLen(AbstractNode *expression) : expression(expression) { };
+
+    ~NodeLen();
+
+    virtual AbstractType *evaluate(Environment *env);
+
+private:
+    AbstractNode *expression;
+};
+
 #endif //TEETON_NODE_H

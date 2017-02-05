@@ -41,7 +41,7 @@ AbstractType *NodePrint::evaluate(Environment *env) {
     AbstractType *evaluated = value->evaluate(env);
     cout << evaluated->toString();
 
-    if(breakLine) {
+    if (breakLine) {
         cout << endl;
     }
 
@@ -232,4 +232,22 @@ AbstractType *NodeBreak::evaluate(Environment *env) {
     throw breakException;
 }
 
+// -----------------------------------------------------------------------------
 
+NodeLen::~NodeLen() {
+    delete expression;
+}
+
+// -----------------------------------------------------------------------------
+
+AbstractType *NodeLen::evaluate(Environment *env) {
+    AbstractType *result = expression->evaluate(env);
+
+    if (result->type() != LIST) {
+        runtimeError("len can be only used with lists");
+    }
+
+    TypeList *list = (TypeList *) result;
+
+    return env->allocInt((int) list->value()->size());
+}
