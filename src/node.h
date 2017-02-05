@@ -58,7 +58,7 @@ private:
 
 class NodePrint : public AbstractNode {
 public:
-    NodePrint(AbstractNode *value) : value(value) { };
+    NodePrint(AbstractNode *value, bool breakLine = true) : value(value), breakLine(breakLine) { };
 
     ~NodePrint();
 
@@ -66,6 +66,7 @@ public:
 
 private:
     AbstractNode *value;
+    bool breakLine;
 };
 
 // -----------------------------------------------------------------------------

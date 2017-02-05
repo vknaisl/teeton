@@ -39,7 +39,12 @@ AbstractType *NodeVariableName::evaluate(Environment *env) {
 
 AbstractType *NodePrint::evaluate(Environment *env) {
     AbstractType *evaluated = value->evaluate(env);
-    cout << evaluated->toString() << endl;
+    cout << evaluated->toString();
+
+    if(breakLine) {
+        cout << endl;
+    }
+
     return nullptr;
 }
 
