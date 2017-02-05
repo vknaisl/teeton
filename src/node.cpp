@@ -9,7 +9,7 @@ AbstractType *NodeBlock::evaluate(Environment *env) {
     for (int i = 0; i < nodes_count; i++) {
         nodes[i]->evaluate(env);
     }
-    return NULL;
+    return nullptr;
 }
 
 NodeBlock::~NodeBlock() {
@@ -22,7 +22,7 @@ NodeBlock::~NodeBlock() {
 
 AbstractType *NodeVariableDefinition::evaluate(Environment *env) {
     env->setVariable(name, value->evaluate(env));
-    return NULL;
+    return nullptr;
 }
 
 NodeVariableDefinition::~NodeVariableDefinition() {
@@ -40,7 +40,7 @@ AbstractType *NodeVariableName::evaluate(Environment *env) {
 AbstractType *NodePrint::evaluate(Environment *env) {
     AbstractType *evaluated = value->evaluate(env);
     cout << evaluated->toString() << endl;
-    return NULL;
+    return nullptr;
 }
 
 NodePrint::~NodePrint() {
@@ -61,7 +61,7 @@ AbstractType *NodeBinaryOperator::evaluate(Environment *env) {
         runtimeError("Operator not supported by type");
     }
 
-    return t1->applyOperator(op, t2);
+    return t1->applyOperator(op, t2, env);
 }
 
 NodeBinaryOperator::~NodeBinaryOperator() {
@@ -79,7 +79,7 @@ AbstractType *NodeNotOperator::evaluate(Environment *env) {
     }
 
     TypeBool *b = (TypeBool *) t;
-    return new TypeBool(!b->value());
+    return env->allocBool(!b->value());
 }
 
 NodeNotOperator::~NodeNotOperator() {
@@ -88,8 +88,51 @@ NodeNotOperator::~NodeNotOperator() {
 
 // -----------------------------------------------------------------------------
 
+NodeConstant::~NodeConstant() {
+    clean(value);
+}
+
 AbstractType *NodeConstant::evaluate(Environment *env) {
-    return value;
+    return alloc(value, env);
+}
+
+AbstractType *NodeConstant::alloc(AbstractType *type, Environment *env) {
+    AbstractType *evaluated = nullptr;
+
+    switch (type->type()) {
+        case BOOL:
+            evaluated = env->allocBool(((TypeBool *) type)->value());
+            break;
+        case CHAR:
+            evaluated = env->allocChar(((TypeChar *) type)->value());
+            break;
+        case INT:
+            evaluated = env->allocInt(((TypeInt *) type)->value());
+            break;
+        case LIST: {
+            TypeList *originalList = (TypeList *) type;
+            vector<AbstractType *> *vectorCopy = new vector<AbstractType *>();
+
+            for (auto const &item : *originalList->value()) {
+                vectorCopy->push_back(alloc(item, env));
+            }
+
+            evaluated = env->allocList(vectorCopy);
+        }
+    }
+
+    return evaluated;
+}
+
+void NodeConstant::clean(AbstractType *type) {
+    if (type->type() == LIST) {
+        TypeList *list = (TypeList *) type;
+        for (auto const &item : *list->value()) {
+            clean(item);
+        }
+    }
+
+    delete type;
 }
 
 // -----------------------------------------------------------------------------
@@ -105,16 +148,15 @@ AbstractType *NodeWhile::evaluate(Environment *env) {
         TypeBool *evaluatedBool = (TypeBool *) evaluated;
 
         if (!evaluatedBool->value()) {
-            return NULL;
+            return nullptr;
         }
 
         try {
             block->evaluate(env);
         } catch (NodeBreak::BreakException e) {
-            return NULL;
+            return nullptr;
         }
     }
-    return NULL;
 }
 
 NodeWhile::~NodeWhile() {
@@ -139,10 +181,11 @@ AbstractType *NodeIfElse::evaluate(Environment *env) {
         elseBlock->evaluate(env);
     }
 
-    return NULL;
+    return nullptr;
 }
 
 NodeIfElse::~NodeIfElse() {
+    delete condition;
     delete ifBlock;
     delete elseBlock;
 }
@@ -152,7 +195,7 @@ NodeIfElse::~NodeIfElse() {
 AbstractType *NodeScanInt::evaluate(Environment *env) {
     int number;
     cin >> number;
-    return new TypeInt(number);
+    return env->allocInt(number);
 }
 
 // -----------------------------------------------------------------------------
@@ -160,7 +203,7 @@ AbstractType *NodeScanInt::evaluate(Environment *env) {
 AbstractType *NodeScanChar::evaluate(Environment *env) {
     char character;
     cin >> character;
-    return new TypeChar(character);
+    return env->allocChar(character);
 }
 
 // -----------------------------------------------------------------------------

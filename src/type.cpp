@@ -1,4 +1,5 @@
 #include "type.h"
+#include "environment.h"
 
 using namespace std;
 
@@ -13,10 +14,10 @@ bool AbstractType::supportsOperator(Operator op) {
     }
 }
 
-AbstractType *AbstractType::applyOperator(Operator op, AbstractType *other) {
+AbstractType *AbstractType::applyOperator(Operator op, AbstractType *other, Environment *env) {
     switch (op) {
         case EQEQ:
-            return new TypeBool(this == other);
+            return env->allocBool(this == other);
         default:
             runtimeError("Operator not suported for type");
             return NULL;
@@ -45,19 +46,19 @@ bool TypeBool::supportsOperator(Operator op) {
     }
 }
 
-AbstractType *TypeBool::applyOperator(Operator op, AbstractType *other) {
+AbstractType *TypeBool::applyOperator(Operator op, AbstractType *other, Environment *env) {
     TypeBool *otherBool = (TypeBool *) other;
     switch (op) {
         case EQ:
-            return new TypeBool(_value == otherBool->value());
+            return env->allocBool(_value == otherBool->value());
         case NEQ:
-            return new TypeBool(_value != otherBool->value());
+            return env->allocBool(_value != otherBool->value());
         case AND:
-            return new TypeBool(_value && otherBool->value());
+            return env->allocBool(_value && otherBool->value());
         case OR:
-            return new TypeBool(_value || otherBool->value());
+            return env->allocBool(_value || otherBool->value());
         default:
-            return AbstractType::applyOperator(op, other);
+            return AbstractType::applyOperator(op, other, env);
     }
 }
 
@@ -89,23 +90,23 @@ bool TypeChar::supportsOperator(Operator op) {
     }
 }
 
-AbstractType *TypeChar::applyOperator(Operator op, AbstractType *other) {
+AbstractType *TypeChar::applyOperator(Operator op, AbstractType *other, Environment *env) {
     TypeChar *otherChar = (TypeChar *) other;
     switch (op) {
         case EQ:
-            return new TypeBool(_value == otherChar->value());
+            return env->allocBool(_value == otherChar->value());
         case NEQ:
-            return new TypeBool(_value != otherChar->value());
+            return env->allocBool(_value != otherChar->value());
         case GT:
-            return new TypeBool(_value > otherChar->value());
+            return env->allocBool(_value > otherChar->value());
         case LT:
-            return new TypeBool(_value < otherChar->value());
+            return env->allocBool(_value < otherChar->value());
         case GTE:
-            return new TypeBool(_value >= otherChar->value());
+            return env->allocBool(_value >= otherChar->value());
         case LTE:
-            return new TypeBool(_value <= otherChar->value());
+            return env->allocBool(_value <= otherChar->value());
         default:
-            return AbstractType::applyOperator(op, other);
+            return AbstractType::applyOperator(op, other, env);
     }
 }
 
@@ -146,33 +147,33 @@ bool TypeInt::supportsOperator(Operator op) {
     }
 }
 
-AbstractType *TypeInt::applyOperator(Operator op, AbstractType *other) {
+AbstractType *TypeInt::applyOperator(Operator op, AbstractType *other, Environment *env) {
     TypeInt *otherInt = (TypeInt *) other;
     switch (op) {
         case ADD:
-            return new TypeInt(_value + otherInt->value());
+            return env->allocInt(_value + otherInt->value());
         case SUB:
-            return new TypeInt(_value - otherInt->value());
+            return env->allocInt(_value - otherInt->value());
         case MUL:
-            return new TypeInt(_value * otherInt->value());
+            return env->allocInt(_value * otherInt->value());
         case DIV:
-            return new TypeInt(_value / otherInt->value());
+            return env->allocInt(_value / otherInt->value());
         case MOD:
-            return new TypeInt(_value % otherInt->value());
+            return env->allocInt(_value % otherInt->value());
         case EQ:
-            return new TypeBool(_value == otherInt->value());
+            return env->allocBool(_value == otherInt->value());
         case NEQ:
-            return new TypeBool(_value != otherInt->value());
+            return env->allocBool(_value != otherInt->value());
         case GT:
-            return new TypeBool(_value > otherInt->value());
+            return env->allocBool(_value > otherInt->value());
         case LT:
-            return new TypeBool(_value < otherInt->value());
+            return env->allocBool(_value < otherInt->value());
         case GTE:
-            return new TypeBool(_value >= otherInt->value());
+            return env->allocBool(_value >= otherInt->value());
         case LTE:
-            return new TypeBool(_value <= otherInt->value());
+            return env->allocBool(_value <= otherInt->value());
         default:
-            return AbstractType::applyOperator(op, other);
+            return AbstractType::applyOperator(op, other, env);
     }
 }
 
@@ -205,58 +206,58 @@ bool TypeList::supportsOperator(Operator op) {
     }
 }
 
-AbstractType *TypeList::applyOperator(Operator op, AbstractType *other) {
+AbstractType *TypeList::applyOperator(Operator op, AbstractType *other, Environment *env) {
     TypeList *otherList = (TypeList *) other;
     switch (op) {
         case ADD: {
             vector<AbstractType *> * new_vector = new vector<AbstractType *>(*_value);
             new_vector->insert(new_vector->end(), otherList->value()->begin(), otherList->value()->end());
-            return new TypeList(new_vector);
+            return env->allocList(new_vector);
         }
         case EQ: {
             if (_value->size() != otherList->value()->size()) {
-                return new TypeBool(false);
+                return env->allocBool(false);
             }
             for (unsigned i = 0; i < _value->size(); i++) {
-                TypeBool *result = (TypeBool *) _value->at(i)->applyOperator(NEQ, otherList->value()->at(i));
+                TypeBool *result = (TypeBool *) _value->at(i)->applyOperator(NEQ, otherList->value()->at(i), env);
                 if (result->value()) {
-                    return new TypeBool(false);
+                    return env->allocBool(false);
                 }
             }
-            return new TypeBool(true);
+            return env->allocBool(true);
         }
         case NEQ: {
-            TypeBool *result = (TypeBool *) applyOperator(EQ, other);
-            return new TypeBool(!result->value());
+            TypeBool *result = (TypeBool *) applyOperator(EQ, other, env);
+            return env->allocBool(!result->value());
         }
         case GT: {
             for (unsigned i = 0; i < _value->size(); i++) {
                 if (i < otherList->value()->size()) {
-                    TypeBool *result = (TypeBool *) _value->at(i)->applyOperator(LTE, otherList->value()->at(i));
+                    TypeBool *result = (TypeBool *) _value->at(i)->applyOperator(LTE, otherList->value()->at(i), env);
                     if (result->value()) {
-                        return new TypeBool(false);
+                        return env->allocBool(false);
                     }
                 } else {
-                    return new TypeBool(false);
+                    return env->allocBool(false);
                 }
             }
-            return new TypeBool(true);
+            return env->allocBool(true);
         }
         case LT: {
-            TypeBool *resultEQ = (TypeBool *) applyOperator(EQ, other);
-            TypeBool *resultGT = (TypeBool *) applyOperator(GT, other);
-            return new TypeBool(!resultEQ->value() && !resultGT->value());
+            TypeBool *resultEQ = (TypeBool *) applyOperator(EQ, other, env);
+            TypeBool *resultGT = (TypeBool *) applyOperator(GT, other, env);
+            return env->allocBool(!resultEQ->value() && !resultGT->value());
         }
         case GTE: {
-            TypeBool *result = (TypeBool *) applyOperator(LT, other);
-            return new TypeBool(!result->value());
+            TypeBool *result = (TypeBool *) applyOperator(LT, other, env);
+            return env->allocBool(!result->value());
         }
         case LTE: {
-            TypeBool *result = (TypeBool *)applyOperator(GT, other);
-            return new TypeBool(!result->value());
+            TypeBool *result = (TypeBool *)applyOperator(GT, other, env);
+            return env->allocBool(!result->value());
         }
         default:
-            return AbstractType::applyOperator(op, other);
+            return AbstractType::applyOperator(op, other, env);
     }
 }
 

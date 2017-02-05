@@ -7,6 +7,10 @@
 #include "enums.h"
 #include "utils.h"
 
+
+class Environment;
+
+
 class AbstractType {
 public:
     virtual ~AbstractType() = 0;
@@ -15,7 +19,7 @@ public:
 
     virtual bool supportsOperator(Operator op);
 
-    virtual AbstractType *applyOperator(Operator op, AbstractType *other);
+    virtual AbstractType *applyOperator(Operator op, AbstractType *other, Environment *env);
 
     virtual std::string toString() = 0;
 };
@@ -30,7 +34,7 @@ public:
 
     virtual bool supportsOperator(Operator op);
 
-    virtual AbstractType *applyOperator(Operator op, AbstractType *other);
+    virtual AbstractType *applyOperator(Operator op, AbstractType *other, Environment *env);
 
     bool value();
 
@@ -50,7 +54,7 @@ public:
 
     virtual bool supportsOperator(Operator op);
 
-    virtual AbstractType *applyOperator(Operator op, AbstractType *other);
+    virtual AbstractType *applyOperator(Operator op, AbstractType *other, Environment *env);
 
     char value();
 
@@ -70,7 +74,7 @@ public:
 
     virtual bool supportsOperator(Operator op);
 
-    virtual AbstractType *applyOperator(Operator op, AbstractType *other);
+    virtual AbstractType *applyOperator(Operator op, AbstractType *other, Environment *env);
 
     int value();
 
@@ -93,7 +97,7 @@ public:
 
     virtual bool supportsOperator(Operator op);
 
-    virtual AbstractType *applyOperator(Operator op, AbstractType *other);
+    virtual AbstractType *applyOperator(Operator op, AbstractType *other, Environment *env);
 
     std::vector<AbstractType *> *value();
 

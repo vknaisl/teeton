@@ -104,9 +104,15 @@ class NodeConstant : public AbstractNode {
 public:
     NodeConstant(AbstractType *value) : value(value) { };
 
+    ~NodeConstant();
+
     virtual AbstractType *evaluate(Environment *env);
 
 private:
+    AbstractType *alloc(AbstractType *type, Environment *env);
+
+    void clean(AbstractType *type);
+
     AbstractType *value;
 };
 
@@ -162,7 +168,9 @@ public:
 class NodeBreak : public AbstractNode {
 public:
     virtual AbstractType *evaluate(Environment *env);
-    class BreakException : public std::exception {} breakException;
+
+    class BreakException : public std::exception {
+    } breakException;
 };
 
 #endif //TEETON_NODE_H

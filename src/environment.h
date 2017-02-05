@@ -14,8 +14,17 @@ public:
 
     ~Environment();
 
+    TypeBool *allocBool(bool value);
+
+    TypeChar *allocChar(char value);
+
+    TypeInt *allocInt(int value);
+
+    TypeList *allocList(std::vector<AbstractType *> *value);
+
 private:
     std::unordered_map<std::string, AbstractType *> variables;
+    std::vector<AbstractType *> heap;
 };
 
 #endif //TEETON_ENVIRONMENT_H
