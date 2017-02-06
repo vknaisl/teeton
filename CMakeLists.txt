@@ -10,6 +10,8 @@ set(SOURCE_FILES
         src/main.cpp
         src/node.h
         src/node.cpp
+        src/scanner.h
+        src/scanner.cpp
         src/type.cpp
         src/type.h
         src/utils.h

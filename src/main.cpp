@@ -3,6 +3,7 @@
 #include "type.h"
 #include "environment.h"
 #include "node.h"
+#include "scanner.h"
 
 using namespace std;
 
@@ -409,20 +410,37 @@ void example_garbageCollector() {
 }
 
 
+void example_scanner() {
+    string source = "var a = 1 + 2\nvar b = 'a'\n";
+    Scanner *scanner = new Scanner(source);
+
+    Character *character = scanner->get();
+    while(true) {
+        cout << character->toString() << endl;
+        if (character->cargo == Character::ENDMARK) {
+            break;
+        }
+        delete character;
+        character = scanner->get();
+    }
+}
+
+
 int main() {
-    example_arithmetic();
-    example_comparison();
-    example_whileCycle();
-    example_ifElse();
-    example_complicatedCondition();
-    example_referenceComparison();
-//    example_readingInput();
-//    example_scanString();
-    example_break();
-    example_list();
-    example_listComparison();
-    example_garbageCollector();
-    example_listLen();
-    example_listAppend();
+//    example_arithmetic();
+//    example_comparison();
+//    example_whileCycle();
+//    example_ifElse();
+//    example_complicatedCondition();
+//    example_referenceComparison();
+////    example_readingInput();
+////    example_scanString();
+//    example_break();
+//    example_list();
+//    example_listComparison();
+//    example_garbageCollector();
+//    example_listLen();
+//    example_listAppend();
+    example_scanner();
     return 0;
 }
