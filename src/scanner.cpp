@@ -29,7 +29,7 @@ Scanner::Scanner(string newSourceText) {
     sourceText = newSourceText;
     lastIndex = (int) sourceText.length() - 1;
     sourceIndex = -1;
-    lineIndex = 0;
+    lineIndex = 1;
     colIndex = -1;
 }
 
@@ -56,3 +56,10 @@ Character *Scanner::get() {
 }
 
 
+Character *Scanner::lookahead(int steps) {
+    if (sourceIndex + steps >= sourceText.length()) {
+        return new Character(Character::ENDMARK, 0, 0, 0);
+    }
+
+    return new Character(sourceText[sourceIndex + steps], 0, 0, 0);
+}

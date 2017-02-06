@@ -4,6 +4,7 @@
 #include "environment.h"
 #include "node.h"
 #include "scanner.h"
+#include "lexer.h"
 
 using namespace std;
 
@@ -423,6 +424,32 @@ void example_scanner() {
         delete character;
         character = scanner->get();
     }
+    delete character;
+    delete scanner;
+}
+
+void example_lexer() {
+    string source = "var a = 1 + 2\nvar b = 'a'\nvar c = \"as = df\"\nwhile(a > 2 && True){\nprint(c)\n}\n";
+    Scanner *scanner = new Scanner(source);
+    Lexer *lexer = new Lexer(scanner);
+
+    try {
+        Token *token = lexer->get();
+        while (true) {
+            cout << token->toString() << endl;
+            if (token->tokenType == TOKEN_EOF) {
+                break;
+            }
+            delete token;
+            token = lexer->get();
+        }
+        delete token;
+    } catch (string &e) {
+        cout << e << endl;
+    }
+
+    delete lexer;
+    delete scanner;
 }
 
 
@@ -441,6 +468,7 @@ int main() {
 //    example_garbageCollector();
 //    example_listLen();
 //    example_listAppend();
-    example_scanner();
+//    example_scanner();
+    example_lexer();
     return 0;
 }

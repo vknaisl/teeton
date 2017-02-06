@@ -7,6 +7,8 @@ set(SOURCE_FILES
         src/enums.h
         src/environment.h
         src/environment.cpp
+        src/lexer.h
+        src/lexer.cpp
         src/main.cpp
         src/node.h
         src/node.cpp
@@ -15,6 +17,5 @@ set(SOURCE_FILES
         src/type.cpp
         src/type.h
         src/utils.h
-        src/utils.cpp
-        )
+        src/utils.cpp)
 add_executable(teeton ${SOURCE_FILES})

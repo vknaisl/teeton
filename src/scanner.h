@@ -25,6 +25,8 @@ public:
 
     Character *get();
 
+    Character *lookahead(int steps);
+
 private:
     std::string sourceText;
     int sourceIndex;
