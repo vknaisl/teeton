@@ -112,9 +112,7 @@ AbstractType *TypeChar::applyOperator(Operator op, AbstractType *other, Environm
 
 string TypeChar::toString() {
     string s;
-    s.push_back('\'');
     s.push_back(_value);
-    s.push_back('\'');
     return s;
 }
 

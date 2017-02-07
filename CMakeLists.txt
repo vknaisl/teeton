@@ -17,5 +17,5 @@ set(SOURCE_FILES
         src/type.cpp
         src/type.h
         src/utils.h
-        src/utils.cpp)
+        src/utils.cpp src/parser.cpp src/parser.h)
 add_executable(teeton ${SOURCE_FILES})

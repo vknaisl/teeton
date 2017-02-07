@@ -6,22 +6,19 @@
 
 using namespace std;
 
-bool contains(const string &str, char c) {
-    return str.find(c) != string::npos;
-}
 
-bool contains(const vector<string> &vec, string s) {
-    return find(vec.begin(), vec.end(), s) != vec.end();
-}
 
 // -----------------------------------------------------------------------------
 
 const vector<string> Lexer::Keywords(
-        {"var", "if", "else", "while", "print", "println", "scan_int", "scan_char", "scan_string", "list", "append",
-         "len", "True", "False"});
-const string Lexer::OneCharacterSymbols("=+-*/<>!()[]{}\n");
+        {"if", "else", "while", "print", "println", "scan_int", "scan_char", "scan_string", "list", "append", "len",
+         "get", "set"});
 
-const vector<string> Lexer::TwoCharacterSymbols({"<=", ">=", "==", "&&", "||"});
+const vector<string> Lexer::BooleanKeywords({"True", "False"});
+
+const string Lexer::OneCharacterSymbols("=+-*/%<>!(){},\n");
+
+const vector<string> Lexer::TwoCharacterSymbols({"<=", ">=", "==", "&&", "||", "!="});
 
 const vector<string> Lexer::ThreeCharacterSymbols({"==="});
 
@@ -127,12 +124,14 @@ Token *Lexer::get() {
 
         if (contains(Keywords, token->cargo)) {
             token->tokenType = TOKEN_SYMBOL;
+        } else if (contains(BooleanKeywords, token->cargo)) {
+            token->tokenType = TOKEN_BOOL;
         }
         return token;
     }
 
     // int token
-    if (contains(IntStartChars, c1)) {
+    if (contains(IntStartChars, c1) || (c1 == '-' && contains(IntStartChars, c2[1]))) {
         token->tokenType = TOKEN_INT;
         token->cargo.push_back(c1);
         getChar();
@@ -211,6 +210,6 @@ Token *Lexer::get() {
 
 void Lexer::parseError(std::string desc) {
     ostringstream os;
-    os << "parse error: " << desc << " " << c1 <<" at " << character->lineIndex << ":" << character->colIndex;
+    os << "parse error: " << desc << " " << c1 << " at " << character->lineIndex << ":" << character->colIndex;
     throw os.str();
 }

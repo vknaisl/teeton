@@ -6,16 +6,17 @@ using namespace std;
 inline AbstractNode::~AbstractNode() { }
 
 AbstractType *NodeBlock::evaluate(Environment *env) {
-    for (int i = 0; i < nodes_count; i++) {
-        nodes[i]->evaluate(env);
+    for (auto const &node : *nodes) {
+        node->evaluate(env);
     }
     return nullptr;
 }
 
 NodeBlock::~NodeBlock() {
-    for (int i = 0; i < nodes_count; i++) {
-        delete nodes[i];
+    for (auto const &node : *nodes) {
+        delete node;
     }
+    delete nodes;
 }
 
 // -----------------------------------------------------------------------------

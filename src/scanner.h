@@ -2,6 +2,8 @@
 #define TEETON_SCANNER_H
 
 #include <string>
+#include <vector>
+#include <stack>
 
 
 class Character {

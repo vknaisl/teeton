@@ -4,6 +4,10 @@
 
 #include <iostream>
 #include <exception>
+#include <vector>
+
+#include "type.h"
+
 
 class AbstractNode {
 public:
@@ -16,15 +20,14 @@ public:
 
 class NodeBlock : public AbstractNode {
 public:
-    NodeBlock(AbstractNode **nodes, int nodes_count) : nodes(nodes), nodes_count(nodes_count) { };
+    NodeBlock(std::vector<AbstractNode *> *nodes) : nodes(nodes) { };
 
     ~NodeBlock();
 
     virtual AbstractType *evaluate(Environment *env);
 
 private:
-    AbstractNode **nodes;
-    int nodes_count;
+    std::vector<AbstractNode *> *nodes;
 };
 
 // -----------------------------------------------------------------------------
