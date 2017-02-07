@@ -11,10 +11,11 @@ using namespace std;
 // -----------------------------------------------------------------------------
 
 const vector<string> Lexer::Keywords(
-        {"if", "else", "while", "print", "println", "scan_int", "scan_char", "scan_string", "list", "append", "len",
-         "get", "set"});
+        {"if", "else", "while", "print", "println", "list", "append", "len", "get", "set"});
 
 const vector<string> Lexer::BooleanKeywords({"True", "False"});
+
+const vector<string> Lexer::ScanKeywords({"scan_int", "scan_char", "scan_string"});
 
 const string Lexer::OneCharacterSymbols("=+-*/%<>!(){},\n");
 
@@ -126,6 +127,8 @@ Token *Lexer::get() {
             token->tokenType = TOKEN_SYMBOL;
         } else if (contains(BooleanKeywords, token->cargo)) {
             token->tokenType = TOKEN_BOOL;
+        } else if (contains(ScanKeywords, token->cargo)) {
+            token->tokenType = TOKEN_SCAN;
         }
         return token;
     }

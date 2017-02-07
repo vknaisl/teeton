@@ -1,0 +1,17 @@
+a = scan_int
+println(a)
+
+b = scan_char
+println(b)
+
+c = scan_int + 11
+println(c)
+
+d = scan_string
+println(d)
+
+if (scan_int < 10) {
+    println(True)
+} else {
+    println(False)
+}

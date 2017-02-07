@@ -31,6 +31,8 @@ private:
 
     AbstractNode *parseIfElse();
 
+    AbstractNode* parseScanToken(Token *token);
+
     std::vector<Token *> readExpressionInput();
 
     int operatorPriority(Token *op);

@@ -16,6 +16,7 @@
 #define TOKEN_BOOL "BOOL"
 #define TOKEN_STRING "STRING"
 #define TOKEN_SYMBOL "SYMBOL"
+#define TOKEN_SCAN "SCAN"
 
 
 class Token {
@@ -41,6 +42,7 @@ public:
 private:
     static const std::vector<std::string> Keywords;
     static const std::vector<std::string> BooleanKeywords;
+    static const std::vector<std::string> ScanKeywords;
     static const std::string OneCharacterSymbols;
     static const std::vector<std::string> TwoCharacterSymbols;
     static const std::vector<std::string> ThreeCharacterSymbols;

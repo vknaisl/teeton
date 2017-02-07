@@ -194,6 +194,8 @@ AbstractNode *Parser::parseExpression(vector<Token *> input, int lineIndex, int 
             output->push(new NodeConstant(new TypeList(chars)));
         } else if (value->tokenType == TOKEN_BOOL) {
             output->push(new NodeConstant(new TypeBool(value->cargo == "True")));
+        } else if (value->tokenType == TOKEN_SCAN) {
+            output->push(parseScanToken(value));
         } else if (value->tokenType == TOKEN_IDENTIFIER) {
             output->push(new NodeVariableName(value->cargo));
         } else if (value->tokenType == TOKEN_SYMBOL) {
@@ -231,6 +233,16 @@ AbstractNode *Parser::parseExpression(vector<Token *> input, int lineIndex, int 
     delete output;
 
     return result;
+}
+
+AbstractNode *Parser::parseScanToken(Token *token) {
+    if (token->cargo == "scan_int") {
+        return new NodeScanInt();
+    } else if (token->cargo == "scan_char") {
+        return new NodeScanChar();
+    } else {
+        return new NodeScanString();
+    }
 }
 
 void Parser::processOperator(Token *op, std::stack<AbstractNode *> *output) {

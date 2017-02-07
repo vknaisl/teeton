@@ -265,13 +265,19 @@ vector<AbstractType *> * TypeList::value() {
 
 string TypeList::toString() {
     stringstream ss;
-    ss << "[";
-    for (unsigned i = 0; i < _value->size(); i++) {
-        if (i > 0) {
-            ss << ", ";
+    if (_value->size() > 0 && _value->front()->type() == CHAR) {
+        for (unsigned i = 0; i < _value->size(); i++) {
+            ss << _value->at(i)->toString();
         }
-        ss << _value->at(i)->toString();
+    } else {
+        ss << "[";
+        for (unsigned i = 0; i < _value->size(); i++) {
+            if (i > 0) {
+                ss << ", ";
+            }
+            ss << _value->at(i)->toString();
+        }
+        ss << "]";
     }
-    ss << "]";
     return ss.str();
 }
