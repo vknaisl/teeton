@@ -1,0 +1,8 @@
+i = 'x'
+x1 = 2
+x2 = 5
+if (!((x1 < x2) && (i == 'x'))) {
+  println('a')
+} else {
+  println('b')
+}

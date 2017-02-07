@@ -21,3 +21,7 @@ run: build
 
 valgrind: build
 	valgrind --leak-check=full ./build/teeton examples/sample.ttn
+
+.PHONY: test
+test: build
+	@cd tests && ./runner.sh

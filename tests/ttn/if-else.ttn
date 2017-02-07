@@ -1,0 +1,12 @@
+i = 12
+if (i == 12) {
+  println('a')
+} else {
+  println('b')
+}
+
+if (i == 13) {
+  println('a')
+} else {
+  println('b')
+}
