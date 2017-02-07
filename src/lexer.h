@@ -55,7 +55,6 @@ private:
     Scanner *scanner;
 
     void getChar();
-    void parseError(std::string desc);
 
     Character *character = nullptr;
     char c1;

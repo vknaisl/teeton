@@ -154,7 +154,7 @@ Token *Lexer::get() {
         token->cargo.push_back(c1);
         getChar();
         if (c1 != '\'') {
-            parseError("unterminated character");
+            parseError("Unterminated character literal.", character->lineIndex, character->colIndex);
         }
         getChar();
         return token;
@@ -168,7 +168,7 @@ Token *Lexer::get() {
 
         while (c1 != '"') {
             if (c1 == Character::ENDMARK || c1 == '\n') {
-                parseError("unterminated string");
+                parseError("Unterminated string literal.", character->lineIndex, character->colIndex);
             }
 
             token->cargo.push_back(c1);
@@ -206,13 +206,8 @@ Token *Lexer::get() {
     }
 
     delete token;
-    parseError("unexpected character");
-    return nullptr;
-}
-
-
-void Lexer::parseError(std::string desc) {
     ostringstream os;
-    os << "parse error: " << desc << " " << c1 << " at " << character->lineIndex << ":" << character->colIndex;
-    throw os.str();
+    os << "Unexpected character '" << c1 << "'.";
+    parseError(os.str(), character->lineIndex, character->colIndex);
+    return nullptr;
 }

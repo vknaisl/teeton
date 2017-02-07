@@ -30,7 +30,7 @@ Scanner::Scanner(string newSourceText) {
     lastIndex = (int) sourceText.length() - 1;
     sourceIndex = -1;
     lineIndex = 1;
-    colIndex = -1;
+    colIndex = 0;
 }
 
 Character *Scanner::get() {
@@ -39,7 +39,7 @@ Character *Scanner::get() {
     if (sourceIndex > 0) {
         if (sourceText[sourceIndex - 1] == '\n') {
             lineIndex += 1;
-            colIndex = -1;
+            colIndex = 0;
         }
     }
 
