@@ -11,7 +11,7 @@ using namespace std;
 // -----------------------------------------------------------------------------
 
 const vector<string> Lexer::Keywords(
-        {"if", "else", "while", "print", "println", "list", "append", "len", "get", "set"});
+        {"if", "else", "while", "print", "println", "list", "append", "len", "get", "set", "break"});
 
 const vector<string> Lexer::BooleanKeywords({"True", "False"});
 

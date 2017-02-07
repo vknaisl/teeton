@@ -56,6 +56,8 @@ NodeBlock *Parser::parseBlock() {
             } else if (token->cargo == "if") {
                 nodes->push_back(parseIfElse());
             } else if (token->cargo == "\n") { // newlines ignored inside block
+            } else if (token->cargo == "break") {
+                nodes->push_back(new NodeBreak());
             } else {
                 ostringstream os;
                 os << "Unexpected symbol " << token->cargo << ".";

@@ -1,9 +1,1 @@
-x = 1
-println(x)
-
-while (x < 10) {
-    print(x)
-    print(' ')
-    x = x + 1
-}
-println(' ')
+x = list(1, 2, 3, 4, 5)

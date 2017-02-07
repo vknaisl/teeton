@@ -1,0 +1,9 @@
+i = 0
+while (True) {
+    println(i)
+    if (i > 3) {
+        break
+    } else {
+        i = i + 1
+    }
+}
