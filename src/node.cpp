@@ -1,5 +1,3 @@
-#include <sstream>
-
 #include "environment.h"
 #include "node.h"
 
@@ -62,11 +60,11 @@ AbstractType *NodeBinaryOperator::evaluate(Environment *env) {
     AbstractType *t2 = b->evaluate(env);
 
     if (t1->type() != t2->type()) {
-        runtimeError("Cannot apply operator for different types");
+        runtimeError("Cannot apply operator for different types.");
     }
 
     if (!t1->supportsOperator(op)) {
-        runtimeError("Operator not supported by type");
+        runtimeError("Operator not supported by type.");
     }
 
     return t1->applyOperator(op, t2, env);
@@ -83,7 +81,7 @@ AbstractType *NodeNotOperator::evaluate(Environment *env) {
     AbstractType *t = a->evaluate(env);
 
     if (t->type() != BOOL) {
-        runtimeError("Using not operator with non-boolean variable");
+        runtimeError("Using not operator with non-boolean variable.");
     }
 
     TypeBool *b = (TypeBool *) t;
@@ -150,7 +148,7 @@ AbstractType *NodeWhile::evaluate(Environment *env) {
         AbstractType *evaluated = condition->evaluate(env);
 
         if (evaluated->type() != BOOL) {
-            runtimeError("Cannot use non-bool value for condition");
+            runtimeError("Cannot use non-bool value for condition.");
         }
 
         TypeBool *evaluatedBool = (TypeBool *) evaluated;
@@ -178,7 +176,7 @@ AbstractType *NodeIfElse::evaluate(Environment *env) {
     AbstractType *evaluated = condition->evaluate(env);
 
     if (evaluated->type() != BOOL) {
-        runtimeError("Cannot use non-bool value for condition");
+        runtimeError("Cannot use non-bool value for condition.");
     }
 
     TypeBool *evaluatedBool = (TypeBool *) evaluated;
@@ -247,7 +245,7 @@ AbstractType *NodeLen::evaluate(Environment *env) {
     AbstractType *result = expression->evaluate(env);
 
     if (result->type() != LIST) {
-        runtimeError("len can be only used with lists");
+        runtimeError("len can be only used with lists.");
     }
 
     TypeList *list = (TypeList *) result;
@@ -267,9 +265,7 @@ AbstractType *NodeAppend::evaluate(Environment *env) {
     AbstractType *valueResult = valueExpression->evaluate(env);
 
     if (listResult->type() != LIST) {
-        ostringstream os;
-        os << "First argument of append must be list";
-        runtimeError(os.str());
+        runtimeError("First argument of append must be list.");
     }
 
     TypeList *list = (TypeList *) listResult;
@@ -289,15 +285,11 @@ AbstractType *NodeGet::evaluate(Environment *env) {
     AbstractType *indexResult = indexExpression->evaluate(env);
 
     if (listResult->type() != LIST) {
-        ostringstream os;
-        os << "First argument of get must be list";
-        runtimeError(os.str());
+        runtimeError("First argument of append must be list.");
     }
 
     if (indexResult->type() != INT) {
-        ostringstream os;
-        os << "Second argument of get must be int" << listResult->type();
-        runtimeError(os.str());
+        runtimeError("Second argument of get must be int.");
     }
 
     TypeList *list = (TypeList *) listResult;
@@ -314,15 +306,11 @@ AbstractType *NodeSet::evaluate(Environment *env) {
     AbstractType *valueResult = valueExpression->evaluate(env);
 
     if (listResult->type() != LIST) {
-        ostringstream os;
-        os << "First argument of set must be list";
-        runtimeError(os.str());
+        runtimeError("First argument of set must be list.");
     }
 
     if (indexResult->type() != INT) {
-        ostringstream os;
-        os << "Second argument of set must be int";
-        runtimeError(os.str());
+        runtimeError("Second argument of set must be int.");
     }
 
     TypeList *list = (TypeList *) listResult;

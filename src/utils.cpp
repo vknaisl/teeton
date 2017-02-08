@@ -4,11 +4,12 @@
 using namespace std;
 
 void runtimeError(string err) {
-    cout << "RuntimeError: " << err << endl;
-    exit(1);
+    ostringstream os;
+    os << "RuntimeError: " << err;
+    throw new TeetonError(os.str());
 }
 
-void parseError(std::string err, int lineIndex, int colIndex) {
+void parseError(string err, int lineIndex, int colIndex) {
     ostringstream os;
     os << "Parse error: " << err << " [line: " << lineIndex << ", col: " << colIndex << "] ";
     throw new TeetonError(os.str());
