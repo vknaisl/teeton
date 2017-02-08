@@ -214,4 +214,38 @@ private:
     AbstractNode *valueExpression;
 };
 
+// -----------------------------------------------------------------------------
+
+class NodeGet : public AbstractNode {
+public :
+    NodeGet(AbstractNode *listExpression, AbstractNode *indexExpression) : listExpression(listExpression),
+                                                                           indexExpression(indexExpression) { };
+
+    ~NodeGet();
+
+    virtual AbstractType *evaluate(Environment *env);
+
+private:
+    AbstractNode *listExpression;
+    AbstractNode *indexExpression;
+};
+
+// -----------------------------------------------------------------------------
+
+class NodeSet : public AbstractNode {
+public :
+    NodeSet(AbstractNode *listExpression, AbstractNode *indexExpression, AbstractNode *valueExpression)
+            : listExpression(listExpression), indexExpression(indexExpression), valueExpression(valueExpression) { };
+
+    ~NodeSet();
+
+    virtual AbstractType *evaluate(Environment *env);
+
+private:
+    AbstractNode *listExpression;
+    AbstractNode *indexExpression;
+    AbstractNode *valueExpression;
+};
+
+
 #endif //TEETON_NODE_H

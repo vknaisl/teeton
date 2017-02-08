@@ -292,7 +292,8 @@ void Parser::processOperator(Token *op, std::stack<AbstractNode *> *output) {
     else if (val == "!") createNotOperator(output, op);
     else if (val == "len") createLenFunction(output, op);
     else if (val == "append") createAppendFunction(output, op);
-//    else cout << "we just ignore it " << val << endl;
+    else if (val == "get") createGetFunction(output, op);
+    else if (val == "set") createSetFunction(output, op);
 }
 
 void Parser::createBinaryOperator(Operator op, stack<AbstractNode *> *output, Token *token) {
@@ -345,6 +346,41 @@ void Parser::createAppendFunction(std::stack<AbstractNode *> *output, Token * to
 
     NodeAppend *append = new NodeAppend(listExpression, elementExpression);
     output->push(append);
+}
+
+void Parser::createGetFunction(std::stack<AbstractNode *> *output, Token *token) {
+    if (output->size() < 2) {
+        parseError("Not enough arguments for get function", token->lineIndex, token->colIndex);
+        return;
+    }
+
+    AbstractNode *indexExpression = output->top();
+    output->pop();
+
+    AbstractNode *listExpression = output->top();
+    output->pop();
+
+    NodeGet *get = new NodeGet(listExpression, indexExpression);
+    output->push(get);
+}
+
+void Parser::createSetFunction(std::stack<AbstractNode *> *output, Token *token) {
+    if (output->size() < 3) {
+        parseError("Not enough arguments for set function", token->lineIndex, token->colIndex);
+        return;
+    }
+
+    AbstractNode *valueExpression = output->top();
+    output->pop();
+
+    AbstractNode *indexExpression = output->top();
+    output->pop();
+
+    AbstractNode *listExpression = output->top();
+    output->pop();
+
+    NodeSet *get = new NodeSet(listExpression, indexExpression, valueExpression);
+    output->push(get);
 }
 
 int Parser::operatorPriority(Token *op) {

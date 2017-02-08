@@ -1,6 +1,6 @@
 x = []
-append(x, 2)
-append(x, 2 + 3)
-append(x, (2 * (5 + 6)) + len(x))
+append(x 2)
+append(x (2 + 3))
+append(x (2 * (5 + 6) + len(x)))
 println(len(x))
 println(x)

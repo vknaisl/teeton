@@ -268,7 +268,7 @@ AbstractType *NodeAppend::evaluate(Environment *env) {
 
     if (listResult->type() != LIST) {
         ostringstream os;
-        os << "First argument of append must be LIST, got " << listResult->type() << endl;
+        os << "First argument of append must be list";
         runtimeError(os.str());
     }
 
@@ -276,3 +276,66 @@ AbstractType *NodeAppend::evaluate(Environment *env) {
     list->value()->push_back(valueResult);
     return nullptr;
 }
+
+// -----------------------------------------------------------------------------
+
+NodeGet::~NodeGet() {
+    delete listExpression;
+    delete indexExpression;
+}
+
+AbstractType *NodeGet::evaluate(Environment *env) {
+    AbstractType *listResult = listExpression->evaluate(env);
+    AbstractType *indexResult = indexExpression->evaluate(env);
+
+    if (listResult->type() != LIST) {
+        ostringstream os;
+        os << "First argument of get must be list";
+        runtimeError(os.str());
+    }
+
+    if (indexResult->type() != INT) {
+        ostringstream os;
+        os << "Second argument of get must be int" << listResult->type();
+        runtimeError(os.str());
+    }
+
+    TypeList *list = (TypeList *) listResult;
+    TypeInt *index = (TypeInt *) indexResult;
+
+    return list->value()->at((unsigned) index->value());
+}
+
+// -----------------------------------------------------------------------------
+
+AbstractType *NodeSet::evaluate(Environment *env) {
+    AbstractType *listResult = listExpression->evaluate(env);
+    AbstractType *indexResult = indexExpression->evaluate(env);
+    AbstractType *valueResult = valueExpression->evaluate(env);
+
+    if (listResult->type() != LIST) {
+        ostringstream os;
+        os << "First argument of set must be list";
+        runtimeError(os.str());
+    }
+
+    if (indexResult->type() != INT) {
+        ostringstream os;
+        os << "Second argument of set must be int";
+        runtimeError(os.str());
+    }
+
+    TypeList *list = (TypeList *) listResult;
+    TypeInt *index = (TypeInt *) indexResult;
+
+    (*list->value())[index->value()] = valueResult;
+    return nullptr;
+}
+
+NodeSet::~NodeSet() {
+    delete listExpression;
+    delete indexExpression;
+    delete valueExpression;
+}
+
+

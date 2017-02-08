@@ -17,7 +17,7 @@ const vector<string> Lexer::BooleanKeywords({"True", "False"});
 
 const vector<string> Lexer::ScanKeywords({"scan_int", "scan_char", "scan_string"});
 
-const string Lexer::OneCharacterSymbols("=+-*/%<>!(){},\n");
+const string Lexer::OneCharacterSymbols("=+-*/%<>!(){}\n");
 
 const vector<string> Lexer::TwoCharacterSymbols({"<=", ">=", "==", "&&", "||", "!="});
 

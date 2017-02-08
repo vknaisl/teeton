@@ -1,0 +1,9 @@
+x = []
+i = 1
+while(i <= 10) {
+    append(x i)
+    i = i + 1
+}
+
+println(get(x 0))
+println(get(x (2 * 18 - 33)))

@@ -49,6 +49,10 @@ private:
 
     void createAppendFunction(std::stack<AbstractNode *> *output, Token *token);
 
+    void createGetFunction(std::stack<AbstractNode *> *output, Token *token);
+
+    void createSetFunction(std::stack<AbstractNode *> *output, Token *token);
+
     static const std::vector<std::string> OperatorPriority1;
     static const std::vector<std::string> OperatorPriority2;
     static const std::vector<std::string> OperatorPriority3;
