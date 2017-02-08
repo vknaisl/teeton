@@ -1,0 +1,14 @@
+a = 5
+b = 1
+c = 5
+d = a
+println(a < 10)
+println(a > b)
+println(a >= b)
+println(a < c)
+println(a <= c)
+println(a == b)
+println(a != b)
+println(a == c)
+println(a === c)
+println(a === d)

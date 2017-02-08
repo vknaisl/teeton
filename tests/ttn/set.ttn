@@ -1,0 +1,12 @@
+x = []
+i = 1
+while(i <= 10) {
+    append(x i)
+    i = i + 1
+}
+
+set(x 0 12)
+set(x (12 * 18 - 848 / 4) 13)
+
+println(get(x 0))
+println(get(x 4))

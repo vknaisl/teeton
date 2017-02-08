@@ -1,0 +1,11 @@
+xs = "Dogs"
+ys = "Fish"
+zs = xs
+
+println(xs == ys)
+println(xs != ys)
+println(xs > ys)
+println(xs < ys)
+println(xs >= ys)
+println(xs <= ys)
+println(xs === zs)

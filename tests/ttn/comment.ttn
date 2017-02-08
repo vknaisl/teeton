@@ -1,0 +1,4 @@
+#
+# This simply test that comments are not a problem
+#
+println("OK")
