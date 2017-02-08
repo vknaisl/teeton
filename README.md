@@ -1,5 +1,8 @@
 # Introduction
 
+Teeton is a simple programming language created for Runtime Systems course at the Faculty
+of Information Technology at the Czech Technical University.
+
 # Installation
 
 Once you have copy of this repository, you can run `make build` to build teeton executable.
