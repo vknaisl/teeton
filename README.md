@@ -224,3 +224,12 @@ print(x)
 
 The hash character `#` is used for commends. Basically everything from `#` to
 the end of line is comment.
+
+# Examples
+
+You can find some examples in `examples` folder.
+
+- `hello.ttn` - Simple hello world
+- `reverse_string.ttn` - Example of reading string from user input and reversing it
+- `is_palindrome.ttn` - Program that detects whether the given string is palindrome
+- `bubble_sort.ttn` - Example of bubble sort algorithm in teeton
