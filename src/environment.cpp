@@ -1,3 +1,5 @@
+#include <sstream>
+
 #include "environment.h"
 
 using namespace std;
@@ -13,6 +15,12 @@ void Environment::setVariable(string name, AbstractType *value) {
 }
 
 AbstractType *Environment::getVariable(string name) {
+    if (variables.find(name) == variables.end()) {
+        ostringstream os;
+        os << "Undefined variable " << name << ".";
+        runtimeError(os.str());
+    }
+
     return variables[name];
 }
 
