@@ -17,10 +17,7 @@ clean:
 	@rm -rf build/*
 
 run: build
-	./build/teeton examples/sample.ttn
-
-valgrind: build
-	valgrind --leak-check=full ./build/teeton examples/sample.ttn
+	./build/teeton
 
 .PHONY: test
 test: build

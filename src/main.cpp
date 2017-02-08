@@ -1,5 +1,6 @@
-#include<iostream>
+#include <iostream>
 #include <fstream>
+#include <sstream>
 
 #include "type.h"
 #include "environment.h"
@@ -7,6 +8,8 @@
 #include "parser.h"
 
 using namespace std;
+
+// -- Running program ----------------------------------------------------------
 
 void runProgram(char *path) {
     ifstream file(path);
@@ -28,14 +31,55 @@ void runProgram(char *path) {
     delete parser;
 }
 
-int main(int argc, char *argv[]) {
-    if (argc < 2) {
-        // TODO repl
-        cout << "No input file" << endl;
-        return 1;
+// -- REPL ---------------------------------------------------------------------
+
+string readInput() {
+    char c;
+    vector<char> input;
+
+    while (!(input.size() > 2 && input[input.size() - 1] == '\n' && input[input.size() - 2] == '\n')) {
+        cin >> noskipws >> c;
+        input.push_back(c);
     }
 
-    runProgram(argv[1]);
+    ostringstream os;
 
+    for (auto const &value : input) {
+        os << value;
+    }
+
+    return os.str();
+}
+
+void repl() {
+    cout << "TEETON console " << endl;
+    cout << "use ctrl + C to exit" << endl;
+
+    Environment *env = new Environment();
+    Parser *parser = new Parser();
+
+    for (; ;) {
+        cout << "T> ";
+        string source = readInput();
+        try {
+            AbstractNode *root = parser->parse(source);
+            AbstractType *evaluated = root->evaluate(env);
+            if (evaluated != nullptr) {
+                cout << evaluated->toString() << endl;
+            }
+        } catch (TeetonError *e) {
+            cout << e->err << endl;
+            delete e;
+        }
+    }
+}
+
+// -- main ---------------------------------------------------------------------
+
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        repl();
+    }
+    runProgram(argv[1]);
     return 0;
 }

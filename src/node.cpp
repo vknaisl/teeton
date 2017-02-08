@@ -6,10 +6,11 @@ using namespace std;
 inline AbstractNode::~AbstractNode() { }
 
 AbstractType *NodeBlock::evaluate(Environment *env) {
+    AbstractType *last = nullptr;
     for (auto const &node : *nodes) {
-        node->evaluate(env);
+        last = node->evaluate(env);
     }
-    return nullptr;
+    return last;
 }
 
 NodeBlock::~NodeBlock() {
