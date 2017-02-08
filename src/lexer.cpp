@@ -180,6 +180,15 @@ Token *Lexer::get() {
         return token;
     }
 
+    // array token
+    if (c2 == "[]") {
+        token->tokenType = TOKEN_LIST;
+        token->cargo = c2;
+        getChar();
+        getChar();
+        return token;
+    }
+
     // symbol token
     if (contains(ThreeCharacterSymbols, c3)) {
         token->tokenType = TOKEN_SYMBOL;

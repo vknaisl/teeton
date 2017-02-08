@@ -59,12 +59,12 @@ NodeBlock *Parser::parseBlock() {
             } else if (token->cargo == "break") {
                 nodes->push_back(new NodeBreak());
             } else {
-                ostringstream os;
-                os << "Unexpected symbol " << token->cargo << ".";
-                parseError(os.str(), token->lineIndex, token->colIndex);
+                nodes->push_back(parseLineExpression(token));
             }
         } else if (token->tokenType == TOKEN_IDENTIFIER) {
             nodes->push_back(parseVarDefinition(token));
+        } else {
+            nodes->push_back(parseLineExpression(token));
         }
 
         delete token;
@@ -73,6 +73,30 @@ NodeBlock *Parser::parseBlock() {
     delete token;
 
     return new NodeBlock(nodes);
+}
+
+AbstractNode *Parser::parseLineExpression(Token *first) {
+    Token *token = lexer->get();
+    vector<Token *> input;
+    input.push_back(first);
+    while (token->cargo != "\n") {
+        input.push_back(token);
+        token = lexer->get();
+    }
+    AbstractNode *expression = parseExpression(input, token->lineIndex, token->colIndex);
+
+    delete token;
+    bool isFirst = true;
+    for (auto const &value: input) {
+        if (isFirst) {
+            isFirst = false;
+            continue;
+        }
+        delete value;
+    }
+
+
+    return expression;
 }
 
 
@@ -182,7 +206,6 @@ std::vector<Token *> Parser::readExpressionInput() {
 AbstractNode *Parser::parseExpression(vector<Token *> input, int lineIndex, int colIndex) {
     stack<AbstractNode *> *output = new stack<AbstractNode *>();
     stack<Token *> operatorStack;
-
     for (auto const &value : input) {
         if (value->tokenType == TOKEN_INT) {
             output->push(new NodeConstant(new TypeInt(stoi(value->cargo))));
@@ -198,6 +221,8 @@ AbstractNode *Parser::parseExpression(vector<Token *> input, int lineIndex, int 
             output->push(new NodeConstant(new TypeBool(value->cargo == "True")));
         } else if (value->tokenType == TOKEN_SCAN) {
             output->push(parseScanToken(value));
+        } else if (value->tokenType == TOKEN_LIST) {
+            output->push(new NodeConstant(new TypeList(new vector<AbstractType *>())));
         } else if (value->tokenType == TOKEN_IDENTIFIER) {
             output->push(new NodeVariableName(value->cargo));
         } else if (value->tokenType == TOKEN_SYMBOL) {
@@ -250,24 +275,32 @@ AbstractNode *Parser::parseScanToken(Token *token) {
 void Parser::processOperator(Token *op, std::stack<AbstractNode *> *output) {
     string val = op->cargo;
 
-    if (val == "+") createBinaryOperator(ADD, output);
-    else if (val == "-") createBinaryOperator(SUB, output);
-    else if (val == "*") createBinaryOperator(MUL, output);
-    else if (val == "/") createBinaryOperator(DIV, output);
-    else if (val == "%") createBinaryOperator(MOD, output);
-    else if (val == "==") createBinaryOperator(EQ, output);
-    else if (val == "!=") createBinaryOperator(NEQ, output);
-    else if (val == "===") createBinaryOperator(EQEQ, output);
-    else if (val == "<") createBinaryOperator(LT, output);
-    else if (val == ">") createBinaryOperator(GT, output);
-    else if (val == "<=") createBinaryOperator(LTE, output);
-    else if (val == ">=") createBinaryOperator(GTE, output);
-    else if (val == "&&") createBinaryOperator(AND, output);
-    else if (val == "||") createBinaryOperator(OR, output);
-    else if (val == "!") createNotOperator(output);
+    if (val == "+") createBinaryOperator(ADD, output, op);
+    else if (val == "-") createBinaryOperator(SUB, output, op);
+    else if (val == "*") createBinaryOperator(MUL, output, op);
+    else if (val == "/") createBinaryOperator(DIV, output, op);
+    else if (val == "%") createBinaryOperator(MOD, output, op);
+    else if (val == "==") createBinaryOperator(EQ, output, op);
+    else if (val == "!=") createBinaryOperator(NEQ, output, op);
+    else if (val == "===") createBinaryOperator(EQEQ, output, op);
+    else if (val == "<") createBinaryOperator(LT, output, op);
+    else if (val == ">") createBinaryOperator(GT, output, op);
+    else if (val == "<=") createBinaryOperator(LTE, output, op);
+    else if (val == ">=") createBinaryOperator(GTE, output, op);
+    else if (val == "&&") createBinaryOperator(AND, output, op);
+    else if (val == "||") createBinaryOperator(OR, output, op);
+    else if (val == "!") createNotOperator(output, op);
+    else if (val == "len") createLenFunction(output, op);
+    else if (val == "append") createAppendFunction(output, op);
+//    else cout << "we just ignore it " << val << endl;
 }
 
-void Parser::createBinaryOperator(Operator op, stack<AbstractNode *> *output) {
+void Parser::createBinaryOperator(Operator op, stack<AbstractNode *> *output, Token *token) {
+    if (output->size() < 2) {
+        parseError("Not enough operands for binary operator.", token->lineIndex, token->colIndex);
+        return;
+    }
+
     AbstractNode *operand2 = output->top();
     output->pop();
 
@@ -278,12 +311,40 @@ void Parser::createBinaryOperator(Operator op, stack<AbstractNode *> *output) {
     output->push(binaryOperator);
 }
 
-void Parser::createNotOperator(stack<AbstractNode *> *output) {
-    AbstractNode *operand = output->top();
+void Parser::createNotOperator(stack<AbstractNode *> *output, Token *token) {
+    if (output->size() < 1) {
+        parseError("Not enough operands for ! operator.", token->lineIndex, token->colIndex);
+        return;
+    }
+    NodeNotOperator *notOperator = new NodeNotOperator(output->top());
+    output->pop();
+    output->push(notOperator);
+}
+
+void Parser::createLenFunction(std::stack<AbstractNode *> *output, Token *token) {
+    if (output->size() < 1) {
+        parseError("Missing argument for len function.", token->lineIndex, token->colIndex);
+        return;
+    }
+    NodeLen *len = new NodeLen(output->top());
+    output->pop();
+    output->push(len);
+}
+
+void Parser::createAppendFunction(std::stack<AbstractNode *> *output, Token * token) {
+    if (output->size() < 2) {
+        parseError("Not enough arguments for append function", token->lineIndex, token->colIndex);
+        return;
+    }
+
+    AbstractNode *elementExpression = output->top();
     output->pop();
 
-    NodeNotOperator *notOperator = new NodeNotOperator(operand);
-    output->push(notOperator);
+    AbstractNode *listExpression = output->top();
+    output->pop();
+
+    NodeAppend *append = new NodeAppend(listExpression, elementExpression);
+    output->push(append);
 }
 
 int Parser::operatorPriority(Token *op) {

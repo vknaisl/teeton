@@ -1,3 +1,5 @@
+#include <sstream>
+
 #include "environment.h"
 #include "node.h"
 
@@ -265,7 +267,9 @@ AbstractType *NodeAppend::evaluate(Environment *env) {
     AbstractType *valueResult = valueExpression->evaluate(env);
 
     if (listResult->type() != LIST) {
-        runtimeError("first argument of append must be a list");
+        ostringstream os;
+        os << "First argument of append must be LIST, got " << listResult->type() << endl;
+        runtimeError(os.str());
     }
 
     TypeList *list = (TypeList *) listResult;

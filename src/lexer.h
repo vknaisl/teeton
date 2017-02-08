@@ -15,6 +15,7 @@
 #define TOKEN_CHAR "CHAR"
 #define TOKEN_BOOL "BOOL"
 #define TOKEN_STRING "STRING"
+#define TOKEN_LIST "LIST"
 #define TOKEN_SYMBOL "SYMBOL"
 #define TOKEN_SCAN "SCAN"
 

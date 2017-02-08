@@ -21,6 +21,8 @@ private:
 
     NodeBlock *parseBlock();
 
+    AbstractNode *parseLineExpression(Token *first);
+
     AbstractNode *parseExpression(std::vector<Token *> input, int lineIndex, int colIndex);
 
     AbstractNode *parseVarDefinition(Token *identifier);
@@ -31,7 +33,7 @@ private:
 
     AbstractNode *parseIfElse();
 
-    AbstractNode* parseScanToken(Token *token);
+    AbstractNode *parseScanToken(Token *token);
 
     std::vector<Token *> readExpressionInput();
 
@@ -39,9 +41,13 @@ private:
 
     void processOperator(Token *op, std::stack<AbstractNode *> *output);
 
-    void createBinaryOperator(Operator op, std::stack<AbstractNode *> *output);
+    void createBinaryOperator(Operator op, std::stack<AbstractNode *> *output, Token *token);
 
-    void createNotOperator(std::stack<AbstractNode *> *output);
+    void createNotOperator(std::stack<AbstractNode *> *output, Token *token);
+
+    void createLenFunction(std::stack<AbstractNode *> *output, Token *token);
+
+    void createAppendFunction(std::stack<AbstractNode *> *output, Token *token);
 
     static const std::vector<std::string> OperatorPriority1;
     static const std::vector<std::string> OperatorPriority2;

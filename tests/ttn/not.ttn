@@ -1,0 +1,3 @@
+println(!True)
+println(!(2 > 5))
+println(!(2 >= 3) && !(5 == 2))
