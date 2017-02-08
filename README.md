@@ -2,6 +2,45 @@
 
 # Installation
 
+Once you have copy of this repository, you can run `make build` to build teeton executable.
+Then it is a good idea to run `make test` to ensure that everything works correctly.
+
+If everything is fine you can use `make run` to open teeton console. By running `make install`
+the teeton executable is copied into `/usr/local/bin` and can be used directly in terminal.
+If you want to get rid of it, simply run `make uninstall`.
+
+# Usage
+
+You can use teeton either in console mode or to run teeton programs.
+
+## Console mode
+
+Console mode can be used by running teeton executable without any arguments.
+
+```
+$ teeton
+TEETON console 
+use ctrl + C to exit
+T> 1 + 2
+
+3
+
+```
+
+Every statement is evaluated after 2 newlines.
+
+## Running programs
+
+Once you have written your program, you can run it with teeton. Simply give teeton executable
+program path as an argument.
+
+```
+$ teeton my_program.ttn
+```
+
+You can see some programs in `examples` folder.
+
+
 # Language
 
 ## Types

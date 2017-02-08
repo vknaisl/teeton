@@ -22,3 +22,10 @@ run: build
 .PHONY: test
 test: build
 	@cd tests && ./runner.sh
+
+install: build
+	cp build/teeton /usr/local/bin
+
+.PHONY: uninstall
+uninstall:
+	rm /usr/local/bin/teeton
