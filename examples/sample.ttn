@@ -1,6 +1,1 @@
-x = []
-append(x 1)
-append(x 2)
-append(x 3)
-set(x (0 * 8 - 7 + 8) (5 * 12))
-println(get(x (1)))
+println("Hello from Teeton!")

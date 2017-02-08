@@ -1,0 +1,20 @@
+println("Write a word:")
+
+word = scan_string
+reversed = []
+
+i = len(word) - 1
+while(i >= 0) {
+    append(reversed get(word i))
+    i = i - 1
+}
+
+print("Word '")
+print(word)
+print("' is")
+
+if (word == reversed) {
+    println(" a palindrome.")
+} else {
+    println(" not a palindrome.")
+}
