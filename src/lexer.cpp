@@ -97,7 +97,7 @@ Token *Lexer::get() {
         // ignore commment lines
         while (c1 == '#') {
             getChar();
-            while (c1 != '\n' || c1 != Character::ENDMARK) {
+            while (c1 != '\n' && c1 != Character::ENDMARK) {
                 getChar();
             }
         }
