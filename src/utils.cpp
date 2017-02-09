@@ -1,5 +1,7 @@
-#include "utils.h"
+#include <algorithm>
 #include <sstream>
+
+#include "utils.h"
 
 using namespace std;
 

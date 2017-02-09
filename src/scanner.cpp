@@ -57,7 +57,7 @@ Character *Scanner::get() {
 
 
 Character *Scanner::lookahead(int steps) {
-    if (sourceIndex + steps >= sourceText.length()) {
+    if (sourceIndex + steps >= (int) sourceText.length()) {
         return new Character(Character::ENDMARK, 0, 0, 0);
     }
 

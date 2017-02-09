@@ -26,7 +26,7 @@ public:
     TypeList *allocList(std::vector<AbstractType *> *value);
 
 private:
-    int heapSizeLimit;
+    unsigned heapSizeLimit;
     std::unordered_map<std::string, AbstractType *> variables;
     std::vector<AbstractType *> heap;
 
