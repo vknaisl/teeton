@@ -213,6 +213,19 @@ while (i < 10) {
 }
 ```
 
+Loop can be stopped using `break` statement.
+
+```
+i = 0
+while (True) {
+    if (i > 10) {
+        break
+    } else {
+        i = i + 1
+    }
+}
+```
+
 ## User Input
 
 Teeton has few statements to read user input.
